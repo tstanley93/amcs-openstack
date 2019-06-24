@@ -42,10 +42,10 @@ mkdir /home/stack/.git
 touch /home/stack/.git/config
 git config --global credential.helper store
 git config --global http.sslverify false
-git config --global user.email "t.stanley@f5.com"
+git config --global user.email "tstanley@allmobilecs.com"
 git config --global user.name "Thomas Stanley"
-git clone https://gitswarm.f5net.com/spsolutions/vnfm.git
-ln -s /home/stack/vnfm/rhosp12-install /home/stack/templates
-ln -s /home/stack/vnfm/rhosp12-install/undercloud.conf /home/stack/undercloud.conf
+git clone https://github.com/tstanley93/amcs-openstack.git
+ln -s /home/stack/amcs-openstack/rhosp12-install /home/stack/templates
+ln -s /home/stack/amcs-openstack/rhosp12-install/undercloud.conf /home/stack/undercloud.conf
 
 reboot
