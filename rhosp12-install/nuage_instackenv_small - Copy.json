@@ -1,0 +1,60 @@
+{
+  "nodes":[
+    {
+      "mac":[
+        "a4:bf:01:57:ab:62"
+      ],
+      "name": "specter1",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"admin",
+      "pm_password":"###MWCdemo!1",
+      "pm_addr":"10.7.0.10",
+      "cpu":"96",
+      "memory":"180841",
+      "disk":"805",
+      "arch":"x86_64"      
+    },
+    {
+      "mac":[
+        "a4:bf:01:55:7e:bf"
+      ],
+      "name": "specter2",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"admin",
+      "pm_password":"###MWCdemo!1",
+      "pm_addr":"10.7.0.11",
+      "cpu":"72",
+      "memory":"196742",
+      "disk":"553",
+      "arch":"x86_64"      
+    },
+    {
+      "mac":[
+        "a4:bf:01:55:7d:6f"
+      ],
+      "name": "specter3",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"admin",
+      "pm_password":"###MWCdemo!1",
+      "pm_addr":"10.7.0.12",
+      "cpu":"72",
+      "memory":"196749",
+      "disk":"553",
+      "arch":"x86_64"      
+    },
+    {
+      "mac":[
+        "a4:bf:01:55:7f:f3"
+      ],
+      "name": "specter4",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"admin",
+      "pm_password":"###MWCdemo!1",
+      "pm_addr":"10.7.0.13",
+      "cpu":"72",
+      "memory":"196749",
+      "disk":"553",
+      "arch":"x86_64"      
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "nodes":[
+    {
+      "name": "sp-r640-01.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"root",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.21",
+      "cpu":"96",
+      "memory":"196608",
+      "disk":"446",
+      "arch":"x86_64",
+      "mac":[
+        "f8:f2:1e:0c:92:d8"
+      ]
+    },
+    {
+      "name": "sp-r640-02.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"root",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.22",
+      "cpu":"96",
+      "memory":"196608",
+      "disk":"446",
+      "arch":"x86_64",
+      "mac":[
+        "f8:f2:1e:0c:a1:b8"
+      ]
+    },
+    {
+      "name": "sp-r640-03.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"root",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.23",
+      "cpu":"96",
+      "memory":"196608",
+      "disk":"446",
+      "arch":"x86_64",
+      "mac":[
+        "f8:f2:1e:0c:a1:58"
+      ]
+    },
+    {
+      "name": "sp-r640-04.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"root",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.24",
+      "cpu":"96",
+      "memory":"196608",
+      "disk":"446",
+      "arch":"x86_64",
+      "mac":[
+        "f8:f2:1e:0c:a3:18"
+      ]
+    },
+    {
+      "name": "sp-r640-05.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"root",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.25",
+      "cpu":"96",
+      "memory":"196608",
+      "disk":"446",
+      "arch":"x86_64",
+      "mac":[
+        "f8:f2:1e:0c:a3:38"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+parameter_defaults:
+  NetworkDeploymentActions: ['CREATE','UPDATE']
+  OvercloudControlFlavor: control
+  OvercloudComputeFlavor: compute
+  OvercloudHPComputesriovFlavor: hp-computesriov
+  OvercloudDellComputesriovFlavor: dell-computesriov
+  OvercloudHPComputeFlavor: hp-compute
+  OvercloudDellComputeFlavor: dell-compute
+  ControllerCount: 1
+  ComputeCount: 0
+  DellComputeCount: 0
+  HPComputeCount: 1
+  ComputesriovCount: 0
+  DellComputesriovCount: 0
+  HPComputesriovCount: 0
+  TimeZone: 'America/Los_Angeles' 
+  NovaComputeSchedulerHints:
+    'capabilities:profile': 'compute'
+  DellComputeSchedulerHints:
+    'capabilities:profile': 'dell-compute'
+  HPComputeSchedulerHints:
+    'capabilities:profile': 'hp-compute'
+  HPComputesriovSchedulerHints:
+    'capabilities:profile': 'hp-computesriov'
+  DellComputesriovSchedulerHints:
+    'capabilities:profile': 'dell-computesriov'
+  NovaComputeExtraConfig:        
+    nova::disk_allocation_ratio: 4.0
+  DellComputeExtraConfig:        
+    nova::disk_allocation_ratio: 4.0
+  HPComputeExtraConfig:        
+    nova::disk_allocation_ratio: 4.0
+  HPComputesriovExtraConfig:    
+    nova::disk_allocation_ratio: 4.0
+  DellComputesriovExtraConfig:
+    nova::disk_allocation_ratio: 4.0

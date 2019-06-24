@@ -1,0 +1,32 @@
+{
+  "nodes":[
+    {
+      "name": "sp-dl380-01.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"Administrator",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.31",
+      "cpu":"56",
+      "memory":"65536",
+      "disk":"222",
+      "arch":"x86_64",
+      "mac":[
+        "3c:fd:fe:bd:f7:58"
+      ]
+    },
+    {
+      "name": "sp-dl380-02.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"Administrator",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.32",
+      "cpu":"56",
+      "memory":"65536",
+      "disk":"222",
+      "arch":"x86_64",
+      "mac":[
+        "3c:fd:fe:bd:f6:34"
+      ]
+    }
+  ]
+}

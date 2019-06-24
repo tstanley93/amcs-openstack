@@ -1,0 +1,32 @@
+{
+  "nodes":[
+    {
+      "name": "sp-r640-02.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"root",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.22",
+      "cpu":"96",
+      "memory":"196608",
+      "disk":"446",
+      "arch":"x86_64",
+      "mac":[
+        "b4:96:91:25:de:04"
+      ]
+    },
+    {
+      "name": "sp-r640-01.pdsea.f5net.com",
+      "pm_type":"pxe_ipmitool",
+      "pm_user":"root",
+      "pm_password":"splab2018ftw!",
+      "pm_addr":"10.146.92.21",
+      "cpu":"96",
+      "memory":"196608",
+      "disk":"446",
+      "arch":"x86_64",
+      "mac":[
+        "b4:96:91:25:e5:2c"
+      ]
+    }
+  ]
+}
