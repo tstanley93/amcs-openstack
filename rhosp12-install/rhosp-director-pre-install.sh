@@ -31,7 +31,7 @@ if ! id stack; then
 	useradd stack
 fi
 
-echo -e 'splab2018ftw!' | passwd --stdin stack
+echo -e 'SquidJ1g' | passwd --stdin stack
 echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack
 chmod 0440 /etc/sudoers.d/stack
 mkdir -p /home/stack/images && chown stack:stack /home/stack/images
