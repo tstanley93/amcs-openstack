@@ -1,0 +1,335 @@
+heat_template_version: rocky
+
+description: >
+  OpenStack containerized Ironic API service
+
+parameters:
+  ContainerIronicApiImageStein:
+    description: image
+    type: string
+    default: ''
+  ContainerIronicApiImage:
+    description: image
+    type: string
+  ContainerIronicApiConfigImage:
+    description: The container image to use for the ironic_api config_volume
+    type: string
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  DeployIdentifier:
+    default: ''
+    type: string
+    description: >
+      Setting this to a unique value will re-run any deployment tasks which
+      perform configuration on a Heat stack-update.
+  IronicPassword:
+    description: The password for the Ironic service and db account, used by the Ironic services
+    type: string
+    hidden: true
+  MonitoringSubscriptionIronicApi:
+    default: 'overcloud-ironic-api'
+    type: string
+  KeystoneRegion:
+    type: string
+    default: 'regionOne'
+    description: Keystone region for endpoint
+  IronicApiPolicies:
+    description: |
+      A hash of policies to configure for Ironic API.
+      e.g. { ironic-context_is_admin: { key: context_is_admin, value: 'role:admin' } }
+    default: {}
+    type: json
+  IronicCorsAllowedOrigin:
+    type: string
+    default: ''
+    description: Indicate whether this resource may be shared with the domain received in the request
+                 "origin" header.
+  EnableInternalTLS:
+    type: boolean
+    default: false
+
+conditions:
+  fast_forward_upgrade: {not: {equals: [{get_param: ContainerIronicApiImageStein},'']}}
+  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
+  cors_allowed_origin_unset: {equals : [{get_param: IronicCorsAllowedOrigin}, '']}
+
+resources:
+
+  ApacheServiceBase:
+    type: ../../deployment/apache/apache-baremetal-puppet.yaml
+    properties:
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      EndpointMap: {get_param: EndpointMap}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+      EnableInternalTLS: {get_param: EnableInternalTLS}
+
+  ContainersCommon:
+    type: ../containers-common.yaml
+
+  MySQLClient:
+    type: ../database/mysql-client.yaml
+
+  IronicBase:
+    type: ./ironic-base-puppet.yaml
+    properties:
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      EndpointMap: {get_param: EndpointMap}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+outputs:
+  role_data:
+    description: Role data for the Ironic API role.
+    value:
+      service_name: ironic_api
+      keystone_resources:
+        ironic:
+          endpoints:
+            public: {get_param: [EndpointMap, IronicPublic, uri_no_suffix]}
+            internal: {get_param: [EndpointMap, IronicInternal, uri_no_suffix]}
+            admin: {get_param: [EndpointMap, IronicAdmin, uri_no_suffix]}
+          users:
+            ironic:
+              password: {get_param: IronicPassword}
+              roles:
+                - admin
+                - service
+          region: {get_param: KeystoneRegion}
+          service: 'baremetal'
+      monitoring_subscription: {get_param: MonitoringSubscriptionIronicApi}
+      config_settings:
+        map_merge:
+          - get_attr: [IronicBase, role_data, config_settings]
+          - get_attr: [ApacheServiceBase, role_data, config_settings]
+          -
+            if:
+            - cors_allowed_origin_unset
+            - {}
+            - ironic::cors::allowed_origin: {get_param: IronicCorsAllowedOrigin}
+          - ironic::api::authtoken::password: {get_param: IronicPassword}
+            ironic::api::authtoken::project_name: 'service'
+            ironic::api::authtoken::user_domain_name: 'Default'
+            ironic::api::authtoken::project_domain_name: 'Default'
+            ironic::api::authtoken::username: 'ironic'
+            ironic::api::authtoken::www_authenticate_uri: {get_param: [EndpointMap, KeystoneInternal, uri_no_suffix] }
+            ironic::api::authtoken::auth_url: {get_param: [EndpointMap, KeystoneInternal, uri_no_suffix]}
+            # NOTE: bind IP is found in hiera replacing the network name with the
+            # local node IP for the given network; replacement examples
+            # (eg. for internal_api):
+            # internal_api -> IP
+            # internal_api_uri -> [IP]
+            # internal_api_subnet - > IP/CIDR
+            ironic::api::host_ip:
+             str_replace:
+                template:
+                  "%{hiera('$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, IronicApiNetwork]}
+            ironic::api::port: {get_param: [EndpointMap, IronicInternal, port]}
+            # This is used to build links in responses
+            ironic::api::public_endpoint: {get_param: [EndpointMap, IronicPublic, uri_no_suffix]}
+            ironic::api::service_name: 'httpd'
+            ironic::policy::policies: {get_param: IronicApiPolicies}
+            ironic::wsgi::apache::bind_host:
+              str_replace:
+                template:
+                  "%{hiera('$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, IronicApiNetwork]}
+            ironic::wsgi::apache::port: {get_param: [EndpointMap, IronicInternal, port]}
+            ironic::wsgi::apache::servername:
+              str_replace:
+                template:
+                  "%{hiera('fqdn_$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, IronicApiNetwork]}
+            ironic::wsgi::apache::ssl: {get_param: EnableInternalTLS}
+            ironic::cors::max_age: 3600
+            ironic::cors::allow_methods: 'GET,POST,PUT,DELETE,OPTIONS,PATCH'
+            ironic::cors::allow_headers: 'Content-Type,Cache-Control,Content-Language,Expires,Last-Modified,Pragma,X-Auth-Token'
+            ironic::cors::expose_headers: 'Content-Type,Cache-Control,Content-Language,Expires,Last-Modified,Pragma'
+
+            tripleo::ironic_api::firewall_rules:
+              '133 ironic api':
+                dport:
+                  - 6385
+                  - 13385
+          - apache::default_vhost: false
+      service_config_settings:
+        mysql:
+          ironic::db::mysql::password: {get_param: IronicPassword}
+          ironic::db::mysql::user: ironic
+          ironic::db::mysql::host: {get_param: [EndpointMap, MysqlInternal, host_nobrackets]}
+          ironic::db::mysql::dbname: ironic
+          ironic::db::mysql::allowed_hosts:
+            - '%'
+            - "%{hiera('mysql_bind_host')}"
+      # BEGIN DOCKER SETTINGS
+      puppet_config:
+        config_volume: ironic_api
+        puppet_tags: ironic_config
+        step_config:
+          list_join:
+            - "\n"
+            - - include ::tripleo::profile::base::ironic::api
+              - {get_attr: [MySQLClient, role_data, step_config]}
+        config_image: {get_param: ContainerIronicApiConfigImage}
+      kolla_config:
+        /var/lib/kolla/config_files/ironic_api.json:
+          command: /usr/sbin/httpd -DFOREGROUND
+          config_files:
+            - source: "/var/lib/kolla/config_files/src/etc/httpd/conf.d"
+              dest: "/etc/httpd/conf.d"
+              merge: false
+              preserve_properties: true
+            - source: "/var/lib/kolla/config_files/src/etc/httpd/conf.modules.d"
+              dest: "/etc/httpd/conf.modules.d"
+              # TODO(emilien) remove optional flag once we get a promotion
+              # https://launchpad.net/bugs/1884115
+              optional: true
+              merge: false
+              preserve_properties: true
+            - source: "/var/lib/kolla/config_files/src/*"
+              dest: "/"
+              merge: true
+              preserve_properties: true
+          permissions:
+            - path: /var/log/ironic
+              owner: ironic:ironic
+              recurse: true
+      docker_config:
+        # db sync runs before permissions set by kolla_config
+        step_2:
+          ironic_init_logs:
+            image: &ironic_api_image {get_param: ContainerIronicApiImage}
+            net: none
+            privileged: false
+            user: root
+            volumes:
+              - /var/log/containers/ironic:/var/log/ironic:z
+              - /var/log/containers/httpd/ironic-api:/var/log/httpd:z
+            command: ['/bin/bash', '-c', 'chown -R ironic:ironic /var/log/ironic']
+        step_3:
+          map_merge:
+            - ironic_db_sync:
+                start_order: 2
+                image: *ironic_api_image
+                net: host
+                privileged: false
+                detach: false
+                user: root
+                volumes: &ironic_api_volumes
+                  list_concat:
+                    - {get_attr: [ContainersCommon, volumes]}
+                    -
+                      - /var/lib/config-data/ironic_api/etc/ironic:/etc/ironic:ro
+                      - /var/log/containers/ironic:/var/log/ironic:z
+                      - /var/log/containers/httpd/ironic-api:/var/log/httpd:z
+                      - /var/lib/config-data/ironic_api/etc/my.cnf.d/tripleo.cnf:/etc/my.cnf.d/tripleo.cnf:ro
+                command: "/usr/bin/bootstrap_host_exec ironic_api su ironic -s /bin/bash -c 'ironic-dbsync --config-file /etc/ironic/ironic.conf'"
+                environment:
+                  TRIPLEO_DEPLOY_IDENTIFIER: {get_param: DeployIdentifier}
+            - if:
+                - fast_forward_upgrade
+                - ironic_db_sync_stein:
+                    start_order: 2
+                    image: &ironic_api_image_stein {get_param: ContainerIronicApiImageStein}
+                    net: host
+                    privileged: false
+                    detach: false
+                    user: root
+                    volumes: *ironic_api_volumes
+                    command: "/usr/bin/bootstrap_host_exec ironic_api su ironic -s /bin/bash -c 'ironic-dbsync --config-file /etc/ironic/ironic.conf'"
+                    environment:
+                      TRIPLEO_DEPLOY_IDENTIFIER: {get_param: DeployIdentifier}
+                  ironic_online_data_migrations_stein:
+                    start_order: 2
+                    image: *ironic_api_image_stein
+                    net: host
+                    privileged: false
+                    detach: false
+                    user: root
+                    volumes: *ironic_api_volumes
+                    command: "/usr/bin/bootstrap_host_exec ironic_api su ironic -s /bin/bash -c 'ironic-dbsync --config-file /etc/ironic/ironic.conf online_data_migrations'"
+                    environment:
+                      TRIPLEO_DEPLOY_IDENTIFIER: {get_param: DeployIdentifier}
+                - {}
+        step_4:
+          ironic_api:
+            start_order: 10
+            image: *ironic_api_image
+            net: host
+            user: root
+            restart: always
+            healthcheck:
+              test: /openstack/healthcheck
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /var/lib/kolla/config_files/ironic_api.json:/var/lib/kolla/config_files/config.json:ro
+                  - /var/lib/config-data/puppet-generated/ironic_api:/var/lib/kolla/config_files/src:ro
+                  - /var/log/containers/ironic:/var/log/ironic:z
+                  - /var/log/containers/httpd/ironic-api:/var/log/httpd:z
+                - if:
+                    - internal_tls_enabled
+                    - - /etc/pki/tls/certs/httpd:/etc/pki/tls/certs/httpd:ro
+                    - []
+                - if:
+                    - internal_tls_enabled
+                    - - /etc/pki/tls/private/httpd:/etc/pki/tls/private/httpd:ro
+                    - []
+            environment:
+              KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
+      host_prep_tasks:
+        - name: create persistent directories
+          file:
+            path: "{{ item.path }}"
+            state: directory
+            setype: "{{ item.setype }}"
+            mode: "{{ item.mode|default(omit) }}"
+          with_items:
+            - { 'path': /var/log/containers/ironic, 'setype': svirt_sandbox_file_t, 'mode': '0750' }
+            - { 'path': /var/log/containers/httpd/ironic-api, 'setype': svirt_sandbox_file_t, 'mode': '0750' }
+      external_upgrade_tasks:
+        - when: step|int == 1
+          block: &ironic_online_db_migration
+            - name: Online data migration for Ironic
+              command: "{{ container_cli }} exec ironic_api ironic-dbsync --config-file /etc/ironic/ironic.conf online_data_migrations"
+              delegate_to: "{{ groups['ironic_api'][0] }}"
+              become: true
+              tags:
+                - online_upgrade
+                - online_upgrade_ironic
+      external_update_tasks:
+        - when: step|int == 1
+          block: *ironic_online_db_migration

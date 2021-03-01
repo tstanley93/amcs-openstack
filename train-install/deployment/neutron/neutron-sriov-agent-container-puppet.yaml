@@ -1,0 +1,307 @@
+heat_template_version: rocky
+
+description: >
+  OpenStack Neutron SR-IOV service
+
+parameters:
+  ContainerNeutronSriovImage:
+    description: The container image to use for the Neutron SR-IOV agent
+    type: string
+  ContainerNeutronConfigImage:
+    description: The container image to use for the neutron config_volume
+    type: string
+  DockerSRIOVUlimit:
+    default: ['nofile=16384']
+    description: ulimit for SR-IOV Container
+    type: comma_delimited_list
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  NeutronPhysicalDevMappings:
+    description: >
+      List of <physical_network>:<physical device>
+      All physical networks listed in network_vlan_ranges
+      on the server should have mappings to appropriate
+      interfaces on each agent.
+      Example "tenant0:ens2f0,tenant1:ens2f1"
+    type: comma_delimited_list
+    default: ""
+    tags:
+      - role_specific
+  NeutronExcludeDevices:
+    description: >
+      List of <network_device>:<excluded_devices> mapping
+      network_device to the agent's node-specific list of virtual functions
+      that should not be used for virtual networking. excluded_devices is a
+      semicolon separated list of virtual functions to exclude from
+      network_device. The network_device in the mapping should appear in the
+      physical_device_mappings list.
+    type: comma_delimited_list
+    default: ""
+    tags:
+      - role_specific
+  NeutronSriovNumVFs:
+    description: |
+      Provide the list of VFs to be reserved for each SR-IOV interface.
+      Format ["<interface_name1>:<numvfs1>:<mode>","<interface_name2>:<numvfs2>"]
+      Example ["eth1:4096:switchdev","eth2:128:legacy","eth3:30"]
+    type: comma_delimited_list
+    default: ""
+    tags:
+      - role_specific
+  NeutronSriovAgentExtensions:
+    default: ""
+    description: >
+        Comma-separated list of extensions enabled for the Neutron SR-IOV agents.
+    type: comma_delimited_list
+    tags:
+      - role_specific
+  DerivePciWhitelistEnabled:
+    default: true
+    description: Whether to enable or not the pci passthrough whitelist automation.
+    type: boolean
+    tags:
+      - role_specific
+  NeutronSriovResourceProviderBandwidths:
+    description: >
+      Comma-separated list of <network_device>:<egress_bw>:<ingress_bw> tuples,
+      showing the available bandwidth for the given device in the given
+      direction. The direction is meant from VM perspective. Bandwidth is
+      measured in kilobits per second (kbps). The device must appear in
+      physical_device_mappings as the value.
+    type: comma_delimited_list
+    default: ""
+    tags:
+     - role_specific
+  DockerInsecureRegistryAddress:
+    description: Optional. The IP Address and Port of an insecure docker
+                 namespace that will be configured in /etc/sysconfig/docker.
+                 The value can be multiple addresses separated by commas.
+    type: comma_delimited_list
+    default: []
+
+conditions:
+
+  derive_pci_whitelist_enabled:
+    or:
+      - and:
+        - equals: [{get_param: DerivePciWhitelistEnabled}, true]
+        - equals: [{get_param: [RoleParameters, DerivePciWhitelistEnabled]}, '']
+      - equals: [{get_param: [RoleParameters, DerivePciWhitelistEnabled]}, true]
+  insecure_registry_is_empty: {equals : [{get_param: DockerInsecureRegistryAddress}, []]}
+
+parameter_groups:
+- label: deprecated
+  description: |
+   The following parameters are deprecated and will be removed. They should not
+   be relied on for new deployments. If you have concerns regarding deprecated
+   parameters, please contact the TripleO development team on IRC or the
+   OpenStack mailing list.
+  parameters:
+  - NeutronSriovNumVFs
+
+resources:
+
+  # Merging role-specific parameters (RoleParameters) with the default parameters.
+  # RoleParameters will have the precedence over the default parameters.
+  RoleParametersValue:
+    type: OS::Heat::Value
+    properties:
+      type: json
+      value:
+        map_replace:
+          - map_replace:
+            - neutron::agents::ml2::sriov::physical_device_mappings: NeutronPhysicalDevMappings
+              neutron::agents::ml2::sriov::exclude_devices: NeutronExcludeDevices
+              neutron::agents::ml2::sriov::extensions: NeutronSriovAgentExtensions
+              neutron::agents::ml2::sriov::resource_provider_bandwidths: NeutronSriovResourceProviderBandwidths
+            - values: {get_param: [RoleParameters]}
+          - values:
+              NeutronPhysicalDevMappings: {get_param: NeutronPhysicalDevMappings}
+              NeutronExcludeDevices: {get_param: NeutronExcludeDevices}
+              NeutronSriovAgentExtensions: {get_param: NeutronSriovAgentExtensions}
+              NeutronSriovResourceProviderBandwidths: {get_param: NeutronSriovResourceProviderBandwidths}
+
+  ContainersCommon:
+    type: ../containers-common.yaml
+
+  NeutronBase:
+    type: ./neutron-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  NeutronLogging:
+    type: OS::TripleO::Services::Logging::NeutronCommon
+    properties:
+      NeutronServiceName: sriov-nic-agent
+
+outputs:
+  role_data:
+    description: Role data for Neutron sriov service
+    value:
+      service_name: neutron_sriov_agent
+      config_settings:
+        map_merge:
+          - get_attr: [NeutronBase, role_data, config_settings]
+          - get_attr: [RoleParametersValue, value]
+          - get_attr: [NeutronLogging, config_settings]
+      puppet_config:
+        config_volume: neutron
+        puppet_tags: neutron_config,neutron_agent_sriov_numvfs,neutron_sriov_agent_config
+        step_config: |
+          include ::tripleo::profile::base::neutron::sriov
+        config_image: {get_param: ContainerNeutronConfigImage}
+      kolla_config:
+        /var/lib/kolla/config_files/neutron_sriov_agent.json:
+          command:
+            list_join:
+            - ' '
+            - - /usr/bin/neutron-sriov-nic-agent --config-file /usr/share/neutron/neutron-dist.conf --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/sriov_agent.ini --config-dir /etc/neutron/conf.d/common
+              - get_attr: [NeutronLogging, cmd_extra_args]
+          config_files:
+            - source: "/var/lib/kolla/config_files/src/*"
+              dest: "/"
+              merge: true
+              preserve_properties: true
+          permissions:
+            - path: /var/log/neutron
+              owner: neutron:neutron
+              recurse: true
+      docker_config:
+        step_4:
+          neutron_sriov_agent:
+            start_order: 10
+            image: {get_param: ContainerNeutronSriovImage}
+            net: host
+            pid: host
+            privileged: true
+            restart: always
+            healthcheck: {get_attr: [ContainersCommon, healthcheck_rpc_port]}
+            ulimit: {get_param: DockerSRIOVUlimit}
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                - {get_attr: [NeutronLogging, volumes]}
+                -
+                  - /var/lib/kolla/config_files/neutron_sriov_agent.json:/var/lib/kolla/config_files/config.json:ro
+                  - /var/lib/config-data/puppet-generated/neutron:/var/lib/kolla/config_files/src:ro
+                  - /lib/modules:/lib/modules:ro
+                  - /run:/run
+                  - /sys/class/net:/sys/class/net:rw
+            environment:
+              KOLLA_CONFIG_STRATEGY: COPY_ALWAYS
+      host_prep_tasks:
+        list_concat:
+          - {get_attr: [NeutronLogging, host_prep_tasks]}
+          - - name: enable virt_sandbox_use_netlink for healtcheck
+              seboolean:
+                name: virt_sandbox_use_netlink
+                persistent: yes
+                state: yes
+            -
+              if:
+                - derive_pci_whitelist_enabled
+                - - name: "creating directory"
+                    file:
+                      state: directory
+                      path: /var/lib/pci_passthrough_whitelist_scripts
+                      owner: root
+                      group: root
+                      mode: 0750
+                  - name: derive pci passthrough whitelist
+                    copy:
+                      src: /usr/share/openstack-tripleo-heat-templates/deployment/neutron/derive_pci_passthrough_whitelist.py
+                      dest: /var/lib/pci_passthrough_whitelist_scripts/derive_pci_passthrough_whitelist.py
+                      mode: 0700
+                  - name: run derive_pci_passthrough_whitelist.py
+                    command:  /var/lib/pci_passthrough_whitelist_scripts/derive_pci_passthrough_whitelist.py
+                - []
+      metadata_settings:
+        get_attr: [NeutronBase, role_data, metadata_settings]
+      upgrade_tasks:
+        - name: Switch sriov-agent to hybrid state
+          vars:
+            neutron_sriov_image: {get_param: ContainerNeutronSriovImage}
+          tags:
+            - never
+            - nova_hybrid_state
+          when: step|int == 0
+          block:
+            - name: Check if we need to create neutron_sriov paunch config
+              stat:
+                path: /var/lib/tripleo-config/docker-container-hybrid_neutron_sriov.json
+              register: hybrid_neutron_sriov
+            - name: Implement the hybrid state for neutron_sriov_agent
+              when: not hybrid_neutron_sriov.stat.exists
+              block:
+                - name: Update the neutron_sriov_agent paunch image in config
+                  shell: |
+                    set -o pipefail
+                    jq '.neutron_sriov_agent.image = "{{ neutron_sriov_image }}" | {"neutron_sriov_agent": .neutron_sriov_agent }' \
+                    /var/lib/tripleo-config/docker-container-startup-config-step_4.json >\
+                    /var/lib/tripleo-config/docker-container-hybrid_neutron_sriov.json
+                - name: Make sure the Undercloud hostname is included in /etc/hosts
+                  when:
+                    - undercloud_hosts_entries is defined
+                  lineinfile:
+                    dest: /etc/hosts
+                    line: "{{ undercloud_hosts_entries | join('') }}"
+                    state: present
+                - name: Set container_registry_insecure_registries fact.
+                  set_fact:
+                    container_registry_insecure_registries:
+                      if:
+                        - insecure_registry_is_empty
+                        - []
+                        - {get_param: DockerInsecureRegistryAddress}
+                - name: Set container_registry_insecure registries
+                  when: container_registry_insecure_registries != []
+                  ini_file:
+                    path: /etc/containers/registries.conf
+                    section: registries.insecure
+                    option: registries
+                    value: "{{ container_registry_insecure_registries }}"
+                  register: ini_read_result
+                - name: Restart docker
+                  when:
+                    - container_registry_insecure_registries != []
+                    - ini_read_result is changed
+                  service:
+                    name: docker
+                    state: restarted
+                - name: Remove neutron_sriov_agent container before applying new paunch config
+                  docker_container:
+                    name: neutron_sriov_agent
+                    state: absent
+                # Finally apply the paunch config to start the new nova_compute
+                - name: Apply paunch config for neutron_sriov
+                  shell: |
+                    paunch apply --file /var/lib/tripleo-config/docker-container-hybrid_neutron_sriov.json --config-id hybrid_neutron_sriov

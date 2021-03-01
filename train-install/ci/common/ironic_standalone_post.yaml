@@ -1,0 +1,17 @@
+heat_template_version: rocky
+
+parameters:
+  servers:
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+
+resources:
+  IronicVBMCSetup:
+    type: vbmc_setup.yaml
+    properties:
+       servers:  {get_param: servers}
+

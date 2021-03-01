@@ -1,8 +1,0 @@
-## A Heat environment that can be used to deploy SR-IOV
-resource_registry:
-  OS::TripleO::Services::NeutronSriovAgent: /home/stack/templates/neutron-sriov-agent.yaml
-  OS::TripleO::NodeUserData: /home/stack/templates/sriov-preconfig.yaml
-
-parameter_defaults:  
-  #SRIOV
-  

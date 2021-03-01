@@ -1,0 +1,52 @@
+- name: Deploy step tasks for step 0
+  delegate_to: localhost
+  run_once: true
+  debug:
+    msg: Use --start-at-task 'Deploy step tasks for step 0' to resume from this task
+  when: "tripleo_minor_update is not defined or tripleo_minor_update != 'true'"
+- name: Ensure /var/log/journal exists
+  become: true
+  file: path=/var/log/journal state=directory mode=0750 owner=root group=root setype=var_log_t
+- name: Populate service facts
+  service_facts:
+- name: Wait for cloud-init to finish, if enabled
+  cloud_init_data_facts:
+    filter: status
+  register: res
+  until: >
+    res.cloud_init_data_facts.status.v1.stage is defined and
+    not res.cloud_init_data_facts.status.v1.stage
+  retries: 50
+  delay: 5
+  when: >
+    'cloud-init.service' in ansible_facts.services and
+    ansible_facts.services['cloud-init.service']['status'] == 'enabled'
+- name: Create /var/lib/container-puppet
+  become: true
+  no_log: True
+  file: path=/var/lib/container-puppet state=directory setype=container_file_t selevel=s0 recurse=true
+- name: Write container-puppet.py if Paunch is enabled
+  no_log: True
+  copy: src=docker_puppet_script.yaml dest=/var/lib/container-puppet/container-puppet.py force=yes mode=0600
+  when:
+    - enable_paunch|bool
+- name: Remove container-puppet.py if Paunch is disabled
+  no_log: True
+  file:
+    path: /var/lib/container-puppet/container-puppet.py
+    state: absent
+  when:
+    - not (enable_paunch|bool)
+- name: Write container-puppet.sh
+  become: true
+  no_log: True
+  copy: src=container_puppet_script.yaml dest=/var/lib/container-puppet/container-puppet.sh force=yes mode=0755 setype=container_file_t
+
+{%- for role in roles %}
+- include_tasks: "{% raw %}{{ _task_file_path }}{% endraw %}"
+  vars:
+    _task_file_path: "{{role.name}}/deploy_steps_tasks_step0.yaml"
+  when:
+    - tripleo_role_name == '{{role.name}}'
+    - "{% raw %}'{{ playbook_dir }}/{{ _task_file_path }}' is exists{% endraw %}"
+{%- endfor %}

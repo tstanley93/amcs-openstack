@@ -1,0 +1,30 @@
+# Environment file used in the first step of an overcloud upgrade.
+# This file is required by the tripleoclient and not expected to be updated
+# by the operator. Please use additional -e env.yaml.
+resource_registry:
+  OS::TripleO::Tasks::*PreConfig: OS::Heat::None
+  OS::TripleO::Tasks::*PostConfig: OS::Heat::None
+  # Deprecated/Name changed services
+  OS::TripleO::Services::MongoDb: OS::Heat::None
+
+parameter_defaults:
+  UpgradeLeappCommandOptions: " --enablerepo rhel-8-for-x86_64-baseos-eus-rpms --enablerepo rhel-8-for-x86_64-appstream-eus-rpms --enablerepo rhel-8-for-x86_64-highavailability-eus-rpms --enablerepo advanced-virt-for-rhel-8-x86_64-rpms --enablerepo ansible-2.9-for-rhel-8-x86_64-rpms --enablerepo fast-datapath-for-rhel-8-x86_64-rpms "
+  CephAnsiblePlaybook: default
+  EnablePackageInstall: true
+  UpgradeLevelNovaCompute: ''
+  UpgradeInitCommonCommand: |
+    #!/bin/bash
+    set -eu
+  # FFU parameters
+  # Set operating system upgrade
+  UpgradeLeappEnabled: true
+  # OpenStack packages to upgrade with the OS upgrade.
+  UpgradeLeappToRemove: ['openvswitch2.11','ovn2.11']
+  UpgradeLeappToInstall: ['openvswitch2.13','ovn2.13']
+  # Ceph parameters
+  # As ceph-ansible 3 is kept during the whole upgrade
+  # but the repository will be lost after the operating
+  # system upgrade, we need to bypass the ceph ansible
+  # repo validation to work.
+  CephAnsibleWarning: false
+  DnfStreams: [{'module':'container-tools', 'stream':'2.0'}]

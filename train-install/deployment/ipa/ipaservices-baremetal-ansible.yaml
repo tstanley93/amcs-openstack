@@ -1,0 +1,179 @@
+heat_template_version: rocky
+
+description: Add services and subhosts to IPA server
+
+parameters:
+  RoleNetIpMap:
+    default: {}
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  PythonInterpreter:
+    type: string
+    description: The python interpreter to use for python and ansible actions
+    default: "$(command -v python3 || command -v python)"
+  IdMDomain:
+    default: ''
+    description: IDM domain to register IDM client. Typically, this is discovered
+                 through DNS and does not have to be set explicitly.
+    type: string
+  IdMServer:
+    default: ''
+    description: FQDN for the FreeIPA server.  If you set this value, IdMDomain
+                 also has to be provided.  Typically, this is discovered
+                 through DNS and does not have to set explicitly.
+    type: string
+  IdMNovaKeytab:
+    default: 'FILE:/etc/novajoin/krb5.keytab'
+    description: keytab for the nova/[host fqdn] user on the FreeIPA server.
+    type: string
+  MakeHomeDir:
+    type: boolean
+    description: Configure PAM to create a users home directory if it does not exist.
+    default: False
+  IdMNoNtpSetup:
+    default: False
+    description: Set to true to add --no-ntp to the IDM client install call.
+                 This will cause IDM client install not to set up NTP.
+    type: boolean
+  IdMEnrollBaseServer:
+    default: True
+    description:  Set to true to enroll the base server (computes, controllers)
+    type: boolean
+  IdMInstallClientPackages:
+    default: False
+    description: Set to True to have ansible-freeipa install ipa client packages
+                 on the overcloud node.
+    type: boolean
+  IdMModifyDNS:
+    default: True
+    description: Set to false to disable DNS records manipulation in the FreeIPA server.
+    type: boolean
+  IdMZoneSplitIPv4:
+    default: 1
+    description:  The level by which the PTR DNS record is split when creating zones.
+    type: string
+  IdMZoneSplitIPv6:
+    default: 1
+    description:  The level by which the PTR DNS record is split when creating zones.
+    type: string
+
+conditions:
+  idm_server_provided:
+    not:
+      equals: [{get_param: IdMServer}, ""]
+
+outputs:
+  role_data:
+    description: Role data for the ipaservice service
+    value:
+      service_name: ipaservice
+      upgrade_tasks: []
+      step_config: ''
+      external_deploy_tasks:
+        - name: add the ipa services for this node in step 1
+          when: step|int == 1
+          block:
+            - include_role:
+                name: tripleo_ipa_registration
+              vars:
+                tripleo_ipa_enroll_base_server: {get_param: IdMEnrollBaseServer}
+                tripleo_ipa_delegate_server: "{{ item }}"
+                tripleo_ipa_base_server_fqdn:  "{{ hostvars[item]['fqdn_canonical'] }}"
+                tripleo_ipa_server_metadata: "{{ hostvars[item]['service_metadata_settings'] | to_json }}"
+              loop: "{{ groups.certmonger_user }}"
+            - include_role:
+                name: tripleo_ipa_dns
+              vars:
+                tripleo_ipa_ptr_zone_split_ipv4: {get_param: IdMZoneSplitIPv4}
+                tripleo_ipa_ptr_zone_split_ipv6: {get_param: IdMZoneSplitIPv6}
+              when: {get_param: IdMModifyDNS}
+          environment:
+            if:
+              - idm_server_provided
+              - IPA_HOST: {get_param: IdMServer}
+                IPA_USER: "nova/{{ ansible_fqdn }}"
+                KRB5_CLIENT_KTNAME: {get_param: IdMNovaKeytab}
+              - IPA_USER: "nova/{{ ansible_fqdn }}"
+                KRB5_CLIENT_KTNAME: {get_param: IdMNovaKeytab}
+      deploy_steps_tasks:
+        - name: enroll the node as an ipa client
+          when: step|int == 1
+          vars:
+            map_merge:
+              -
+                state: present
+                ipaclient_otp: "{{ ipa_host_otp }}"
+                idm_enroll_base_server: {get_param: IdMEnrollBaseServer}
+                ipaclient_mkhomedir: {get_param: MakeHomeDir}
+                ipaclient_no_ntp: {get_param: IdMNoNtpSetup}
+                ipaclient_force: yes
+                ipaclient_hostname: "{{ fqdn_canonical }}"
+                ipaclient_install_packages: {get_param: IdMInstallClientPackages}
+                ipaclients:
+                  - "{{ inventory_hostname }}"
+              -
+                if:
+                - idm_server_provided
+                - ipaclient_servers: {get_param: IdMServer}
+                  ipaclient_domain: {get_param: IdMDomain}
+                - {}
+          block:
+            - name: check if default.conf exists
+              stat:
+                path: /etc/ipa/default.conf
+              register: ipa_conf_exists
+            - name: install openssl-perl
+              package:
+                name: openssl-perl
+                state: present
+              when:
+                - ipaclient_install_packages|bool
+            - block:
+                - name: register as an ipa client
+                  import_role:
+                    name: ipaclient
+                - name: restart certmonger service
+                  systemd:
+                    state: restarted
+                    daemon_reload: true
+                    name: certmonger.service
+              when:
+                - idm_enroll_base_server|bool
+                - not ipa_conf_exists.stat.exists
+      scale_tasks:
+        - when: step|int == 1
+          tags: down
+          block:
+            - name: unregister node from ipa server
+              import_role:
+                name: tripleo_ipa_cleanup
+              delegate_to: undercloud
+              vars:
+                tripleo_ipa_keytab: {get_param: IdMNovaKeytab}
+                tripleo_ipa_hosts_to_delete:
+                  - "{{ fqdn_canonical }}"

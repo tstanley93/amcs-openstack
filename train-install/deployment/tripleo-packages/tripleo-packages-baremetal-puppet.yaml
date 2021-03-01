@@ -1,0 +1,595 @@
+heat_template_version: rocky
+
+description: >
+  TripleO Package installation settings
+
+parameters:
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  EnablePackageInstall:
+    default: 'false'
+    description: Set to true to enable package installation at deploy time
+    type: boolean
+  GlanceNodeStagingUri:
+    default: 'file:///var/lib/glance/staging'
+    description: >
+      URI that specifies the staging location to use when importing images
+    type: string
+  UpgradeLeappEnabled:
+    description: Use Leapp for operating system upgrade
+    type: boolean
+    default: false
+  UpgradeLeappDebug:
+    description: Print debugging output when running Leapp
+    type: boolean
+    default: true
+  UpgradeLeappDevelSkip:
+    description: |
+      Skip Leapp checks by setting env variables when running Leapp in
+      development/testing. For example, LEAPP_DEVEL_SKIP_RHSM=1.
+    type: string
+    default: ''
+  UpgradeLeappCommandOptions:
+    description: |
+      In case or using UpgradeLeappDevelSkip with LEAPP_NO_RHSM=1 user
+      can specify --enablerepo <repo1> --enablerepo <repo2> options for
+      leapp to use these repositories for the upgrade process.
+    type: string
+    default: ''
+  UpgradeLeappRebootTimeout:
+    description: Timeout (seconds) for the OS upgrade phase via Leapp
+    type: number
+    default: 3600
+  UpgradeLeappPostRebootDelay:
+    description: |
+      Maximum (seconds) to wait for machine to reboot and respond to a test
+      command.
+    type: number
+    default: 120
+  UpgradeLeappToRemove:
+    default: []
+    description: List of packages to remove during Leapp upgrade.
+    type: comma_delimited_list
+  UpgradeLeappToInstall:
+    default: []
+    description: List of packages to install after Leapp upgrade.
+    type: comma_delimited_list
+  LeappRepoInitCommand:
+    type: string
+    description: |
+      Command or script snippet to run on all overcloud nodes to
+      initialize the Leapp process. E.g. a repository switch.
+    default: ''
+  LeappInitCommand:
+    type: string
+    description: |
+      Command or script snippet to run on all overcloud nodes to
+      apply any necessary workarounds to get Leapp working.
+    default: ''
+  UpgradeInitCommand:
+    type: string
+    description: |
+      Command or script snippet to run on all overcloud nodes to
+      initialize the upgrade process. E.g. a repository switch.
+    default: ''
+  UpgradeInitCommonCommand:
+    type: string
+    description: |
+      Common commands required by the upgrades process. This should not
+      normally be modified by the operator and is set and unset in the
+      major-upgrade-composable-steps.yaml and major-upgrade-converge.yaml
+      environment files.
+    default: ''
+  SkipPackageUpdate:
+    default: 'false'
+    description: Set to true to skip the update all packages
+    type: boolean
+  SkipRhelEnforcement:
+    default: "false"
+    description: Whether to avoid or not RHEL/OSP policies enforcement on Red Hat.
+                 Mainly for CI purpose.  It shouldn't matter on other distributions
+                 where it's disabled in the role. Set to true to skip the enforcement.
+    type: string
+  DnfStreams:
+    default: []
+    description: List of streams to be configured before updating packages. Each list
+                 element contains a dictionary with the following values defined
+                 module[mandatory], stream[mandatory] and profile[optional]. If the profile
+                 is not specified 'common' will be used instead.
+    type: json
+
+resources:
+  RoleParametersValue:
+    type: OS::Heat::Value
+    properties:
+      type: json
+      value:
+        map_replace:
+          - map_replace:
+            - dnf_module_list: DnfStreams
+            - values: {get_param: [RoleParameters]}
+          - values:
+              DnfStreams: {get_param: DnfStreams}
+
+outputs:
+  role_data:
+    description: Role data for the TripleO package settings
+    value:
+      service_name: tripleo_packages
+      config_settings:
+        tripleo::packages::enable_install: {get_param: EnablePackageInstall}
+      step_config: |
+        include ::tripleo::packages
+      upgrade_tasks:
+        - name: Gather missing facts
+          setup:
+            gather_subset: "distribution"
+          when: >-
+            ansible_facts['distribution'] is not defined or
+            ansible_facts['distribution_major_version'] is not defined
+          tags:
+           - always
+
+        - name: Set leapp facts
+          set_fact:
+            upgrade_leapp_enabled: >-
+              {{ _upgradeLeappEnabled | bool and
+                 ansible_facts['distribution'] == 'RedHat' and
+                 ansible_facts['distribution_major_version'] is version('7', '==') }}
+            upgrade_leapp_debug: {get_param: UpgradeLeappDebug}
+            upgrade_leapp_devel_skip: {get_param: UpgradeLeappDevelSkip}
+            upgrade_leapp_command_options: {get_param: UpgradeLeappCommandOptions}
+            upgrade_leapp_reboot_timeout: {get_param: UpgradeLeappRebootTimeout}
+            upgrade_leapp_post_reboot_delay: {get_param: UpgradeLeappPostRebootDelay}
+          vars:
+            _upgradeLeappEnabled: {get_param: UpgradeLeappEnabled}
+          tags:
+            - always
+
+        - name: system_upgrade_prepare step 3
+          tags:
+            - never
+            - system_upgrade
+            - system_upgrade_prepare
+          when:
+            - step|int == 3
+            - upgrade_leapp_enabled
+          block:
+            - name: Hack around broken ceph-common rpm removing /etc/ceph /var/lib/ceph
+              ignore_errors: true
+              shell: |
+                rpm -e --nodeps --noscripts ceph-common
+            - name: remove all OpenStack packages
+              shell: >-
+                yum -y remove
+                *el7ost*
+                galera*
+                xinetd*
+                haproxy*
+                httpd
+                kernel-devel
+                mysql*
+                pacemaker*
+                python-jsonpointer
+                qemu-kvm-common-rhev
+                qemu-img-rhev
+                rabbit*
+                redis*
+                --
+                -*openvswitch*
+                -python-docker
+                -python-PyMySQL
+                -python-pysocks
+                -python2-asn1crypto
+                -python2-babel
+                -python2-cffi
+                -python2-cryptography
+                -python2-dateutil
+                -python2-idna
+                -python2-ipaddress
+                -python2-jinja2
+                -python2-jsonpatch
+                -python2-markupsafe
+                -python2-pyOpenSSL
+                -python2-requests
+                -python2-six
+                -python2-urllib3
+                -python2-chardet
+            - name: Run LeappRepoInitCommand
+              shell:
+                list_join:
+                  - ''
+                  - - "#!/bin/bash\n\n"
+                    - {get_param: LeappRepoInitCommand}
+            # WA for UEFI systems rhbz#1925078
+            - name: Check if system was booted via EFI
+              stat:
+                path: /sys/firmware/efi
+              register: efi
+            - name: Check if efi partition is present in /etc/fstab
+              failed_when: false
+              register: efi_fstab
+              shell: |
+                grep efi /etc/fstab
+            - name: Find out the UUID of UEFI device
+              register: efi_dev
+              failed_when: false
+              shell: |
+                blkid -s UUID -o value "$(blkid -t TYPE=vfat | grep -i efi | cut -d ':' -f1)"
+            - name: Check if red is in efibootmgr
+              register: efi_broken
+              failed_when: false
+              shell: |
+                efibootmgr | grep "red$"
+            - when:
+                - efi_fstab.rc is defined
+                - efi_dev.rc is defined
+                - efi_broken.rc is defined
+                - efi.stat.exists|bool
+                - efi_fstab.rc == 1
+                - efi_dev.rc == 0
+                - efi_broken.rc == 0
+              block:
+                - name: Copy /boot/efi/EFI/redhat to /tmp
+                  copy:
+                    src: /boot/efi/EFI/redhat/
+                    dest: /tmp/workaround_1925078_redhat/
+                    remote_src: true
+                - name: Insert /etc/fstab record
+                  lineinfile:
+                    dest: "/etc/fstab"
+                    line: "UUID={{ efi_dev.stdout }} /boot/efi vfat umask=0077 0 1"
+                - name: Mount the /boot/efi
+                  command: mount /boot/efi
+                - name: Copy /tmp/redhat to /boot/efi/EFI/redhat
+                  copy:
+                    src: /tmp/workaround_1925078_redhat/
+                    dest: /boot/efi/EFI/redhat/
+                    remote_src: true
+                - name: Create boot record
+                  shell: |
+                    DEVICE_PATH="$(blkid -t TYPE=vfat | grep -i efi | cut -d ':' -f1)"
+                    DEVICE="$(lsblk -no pkname $DEVICE_PATH)"
+                    PARTITION="$(echo $DEVICE_PATH | awk '{print $NF}' FS=/$DEVICE)"
+                    efibootmgr -c -L 'Red Hat Enterprise Linux' -d $(echo $DEVICE_PATH | sed s/$PARTITION\$//) -p $PARTITION -l '\EFI\redhat\shimx64.efi'
+                - name: Create grub config file
+                  command: grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
+                - name: Remove btrfs module in case fuse just loaded it
+                  failed_when: false
+                  command: rmmod btrfs
+                - name: Set workaround_1925078_fired
+                  set_fact:
+                    workaround_1925078_fired: True
+            - name: install leapp
+              package:
+                name: leapp
+                state: latest
+            - name: Check that the /etc/leapp/files/pes-events.json exists on UC
+              delegate_to: undercloud
+              stat:
+                path: '/etc/leapp/files/pes-events.json'
+              register: pes_present
+            - name: Check that the /etc/leapp/files/repomap.csv exists on UC
+              delegate_to: undercloud
+              stat:
+                path: '/etc/leapp/files/repomap.csv'
+              register: repomap_present
+            - name: Fetch the Leapp data from undercloud
+              fetch:
+                dest: '{{ playbook_dir }}'
+                src: '{{ item }}'
+              delegate_to: undercloud
+              with_items:
+              - /etc/leapp/files/pes-events.json
+              - /etc/leapp/files/repomap.csv
+              when:
+                - repomap_present.stat.exists
+                - pes_present.stat.exists
+            - name: Copy the Leapp data from undercloud
+              copy:
+                dest: '{{ item }}'
+                src: '{{ playbook_dir }}/{{ inventory_hostname }}/{{ item }}'
+              with_items:
+              - /etc/leapp/files/pes-events.json
+              - /etc/leapp/files/repomap.csv
+              when:
+                - repomap_present.stat.exists
+                - pes_present.stat.exists
+            - name: Run LeappInitCommand
+              shell:
+                list_join:
+                  - ''
+                  - - "#!/bin/bash\n\n"
+                    - {get_param: LeappInitCommand}
+            - name: Remove obsolete nf_conntrack_proto_sctp from /etc/modules-load.d/
+              file:
+                path: /etc/modules-load.d/nf_conntrack_proto_sctp.conf
+                state: absent
+            - name: "add packages into Leapp's to_remove file"
+              vars:
+                pkg_to_remove: { get_param: UpgradeLeappToRemove }
+              lineinfile:
+                path: "/etc/leapp/transaction/to_remove"
+                line: "{{ item }}"
+              loop: "{{ pkg_to_remove }}"
+            - name: "add packages into Leapp's to_install file"
+              vars:
+                pkg_to_install: { get_param: UpgradeLeappToInstall }
+              lineinfile:
+                path: "/etc/leapp/transaction/to_install"
+                line: "{{ item }}"
+              loop: "{{ pkg_to_install }}"
+            - name: "check sshd_config file"
+              stat:
+                path: "/etc/ssh/sshd_config"
+              register: sshd_config_result
+            - name: "add PermitRootLogin option for leapp"
+              lineinfile:
+                path: "/etc/ssh/sshd_config"
+                regexp: "^(# *)?PermitRootLogin"
+                line: "PermitRootLogin without-password"
+        - name: system_upgrade_prepare step 4
+          tags:
+            - never
+            - system_upgrade
+            - system_upgrade_prepare
+          when:
+            - step|int == 4
+            - upgrade_leapp_enabled
+          block:
+            - name: unmount and remove nfs glance entry
+              mount: path=/var/lib/glance/images state=absent
+              ignore_errors: true
+            - name: unmount and remove nfs glance staging entry
+              vars:
+                glance_node_staging_uri: {get_param: GlanceNodeStagingUri}
+              mount: path="{{glance_node_staging_uri[7:]}}" state=absent
+              ignore_errors: true
+            - name: unmount and remove nfs nova entry
+              mount: path=/var/lib/nova/instances state=absent
+              ignore_errors: true
+            - name: set leapp options
+              shell: >
+                leapp answer --section remove_pam_pkcs11_module_check.confirm=True --add
+            - name: run leapp upgrade (download packages)
+              shell: >
+                {% if upgrade_leapp_devel_skip|default(false) %}{{ upgrade_leapp_devel_skip }}{% endif %}
+                leapp upgrade
+                {% if upgrade_leapp_debug|default(true) %}--debug{% endif %}
+                {% if upgrade_leapp_command_options|default(false) %}{{ upgrade_leapp_command_options }}{% endif %}
+
+        - name: system_upgrade_run step 4
+          tags:
+            - never
+            - system_upgrade
+            - system_upgrade_run
+            # In case someone needs to re-run system_upgrade_run post-tasks
+            # but doesn't want to reboot, they can run with
+            # `--skip-tags system_upgrade_reboot`.
+            - system_upgrade_reboot
+          when:
+            - step|int == 4
+            - upgrade_leapp_enabled
+          block:
+            - name: Reset boot order if WA#1925078 fired
+              shell: |
+                NEXT_BOOT="$(efibootmgr | grep BootOrder | awk -F'[ ,]*' '{print $2}')"
+                efibootmgr -n $NEXT_BOOT
+              when:
+                - workaround_1925078_fired is defined
+                - workaround_1925078_fired|bool
+            - name: reboot to perform the upgrade
+              reboot:
+                reboot_timeout: "{{upgrade_leapp_reboot_timeout}}"
+                test_command: >-
+                  systemctl is-system-running | grep -e running -e degraded
+                post_reboot_delay: "{{ upgrade_leapp_post_reboot_delay }}"
+            - name: Set the python to python3
+              vars:
+                ansible_python_interpreter: "/usr/bin/python3"
+              shell: alternatives --set python /usr/bin/python3
+
+        - name: Package and repo update tasks
+          when: step|int == 0
+          block:
+            - name: Run UpgradeInitCommand
+              shell:
+                list_join:
+                  - ''
+                  - - "#!/bin/bash\n\n"
+                    - {get_param: UpgradeInitCommand}
+            - name: Run UpgradeInitCommonCommand
+              shell:
+                list_join:
+                  - ''
+                  - - "#!/bin/bash\n\n"
+                    - {get_param: UpgradeInitCommonCommand}
+            - name: Ensure DNF modules have the right stream
+              vars:
+                dnf_module_list: {get_attr: [RoleParametersValue, value, 'dnf_module_list']}
+              dnf:
+                name: "@{{ item.module }}:{{ item.stream }}/{{ item.profile|default('common') }}"
+                state: present
+              loop: "{{ dnf_module_list|list }}"
+              when:
+                - ansible_distribution_major_version >= '8'
+                - dnf_module_list|length > 0
+            - name: Ensure EL modules are in proper state
+              shell: dnf -y distro-sync
+              when: ansible_distribution_major_version == '8'
+              retries: 5
+              delay: 10
+              register: _dnf_distro_sync
+              until: _dnf_distro_sync is success
+            - name: Clean up Python 2 packages
+              package:
+                name: python2-*
+                state: absent
+              when: ansible_distribution_major_version == '8'
+            - name: Ensure TripleO prerequisite packages are installed
+              package:
+                name:
+                  - jq
+                  - lvm2
+                  - net-snmp
+                  - openstack-selinux
+                  - os-net-config
+                  - puppet-tripleo
+                  - python3-heat-agent*
+                  - rsync
+                state: present
+              when: ansible_distribution_major_version == '8'
+        - name: Special treatment for OpenvSwitch
+          tripleo_ovs_upgrade:
+          when:
+            - step|int == 2
+          register: ovs_upgrade
+        - name: Always ensure the openvswitch service is enabled and running after upgrades
+          service:
+            name: openvswitch
+            enabled: yes
+            state: started
+          when:
+            - step|int == 2
+            - ovs_upgrade.changed|bool
+        - name: Install libibverbs (https://bugs.launchpad.net/tripleo/+bug/1817743)
+          when: step|int == 2
+          package:
+            name: libibverbs
+            state: installed
+        - name: Check for os-net-config upgrade
+          shell: "yum check-upgrade | awk '/os-net-config/{print}'"
+          register: os_net_config_need_upgrade
+          when: step|int == 3
+        - name: Check that os-net-config has configuration
+          shell: test -s /etc/os-net-config/config.json
+          register: os_net_config_has_config
+          failed_when: false
+          when: step|int == 3
+        - block:
+            - name: Upgrade os-net-config
+              package: name=os-net-config state=latest
+            - name: take new os-net-config parameters into account now
+              command: os-net-config --no-activate -c /etc/os-net-config/config.json -v --detailed-exit-codes
+              register: os_net_config_upgrade
+              failed_when: os_net_config_upgrade.rc not in [0,2]
+              changed_when: os_net_config_upgrade.rc == 2
+          when:
+            - step|int == 3
+            - os_net_config_need_upgrade.stdout
+            - os_net_config_has_config.rc == 0
+        - name: Set boolean skip_package_update
+          set_fact:
+            skip_package_update: {get_param: SkipPackageUpdate}
+        # Exclude ansible until https://github.com/ansible/ansible/issues/56636
+        # is available
+        - name: Update all packages
+          when:
+            - step|int == 3
+            - not skip_package_update|bool
+          yum:
+            name: '*'
+            state: latest
+            exclude: ansible
+      external_upgrade_tasks:
+        - name: Clean up upgrade artifacts
+          when: step|int == 1
+          tags:
+            - never
+            - system_upgrade_cleanup
+          block:
+            - name: cleanup tripleo_persist
+              include_role:
+                name: tripleo-persist
+                tasks_from: cleanup.yml
+            - name: cleanup tripleo_transfer
+              include_role:
+                name: tripleo-transfer
+                tasks_from: cleanup.yml
+      update_tasks:
+        - name: Enforce RHOSP rules regarding subscription.
+          include_role:
+            name: tripleo-redhat-enforce
+          vars:
+            skip_rhel_enforcement: {get_param: SkipRhelEnforcement}
+          when:
+            - step|int == 0
+            - ansible_distribution == 'RedHat'
+            - not (skip_rhel_enforcement | bool)
+        - name: Ensure DNF modules have the right stream
+          vars:
+            dnf_module_list: {get_attr: [RoleParametersValue, value, 'dnf_module_list']}
+          dnf:
+            name: "@{{ item.module }}:{{ item.stream }}/{{ item.profile|default('common') }}"
+            state: present
+          loop: "{{ dnf_module_list|list }}"
+          when:
+            - step|int == 0
+            - ansible_distribution_major_version >= '8'
+            - dnf_module_list|length > 0
+        - name: Check for existing yum.pid
+          stat:  path=/var/run/yum.pid
+          register: yum_pid_file
+          when: step|int == 0 or step|int == 3
+        - name: Exit if existing yum process
+          fail: msg="ERROR existing yum.pid detected - can't continue! Please ensure there is no other package update process for the duration of the minor update worfklow. Exiting."
+          when: (step|int == 0 or step|int == 3) and yum_pid_file.stat.exists
+        - name: Set boolean skip_package_update
+          set_fact:
+            skip_package_update: {get_param: SkipPackageUpdate}
+        - name: Special treatment for OpenvSwitch
+          tripleo_ovs_upgrade:
+          when:
+            - step|int == 2
+          register: ovs_upgrade
+        - name: Always ensure the openvswitch service is enabled and running after upgrades
+          service:
+            name: openvswitch
+            enabled: yes
+            state: started
+          when:
+            - step|int == 2
+            - ovs_upgrade.changed|bool
+        # Exclude ansible until https://github.com/ansible/ansible/issues/56636
+        # is available
+        - name: Update all packages
+          when:
+            - step|int == 3
+            - not skip_package_update|bool
+          yum:
+            name: '*'
+            state: latest
+            exclude: ansible
+        # This is failsafe unless openvswitch package does something
+        # to the systemd service state.
+        - name: Ensure openvswitch is running after update
+          when: step|int == 3
+          service:
+            name: openvswitch
+            enabled: yes
+            state: started
+          ignore_errors: true

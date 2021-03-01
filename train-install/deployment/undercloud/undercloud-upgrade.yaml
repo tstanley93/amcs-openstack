@@ -1,0 +1,117 @@
+heat_template_version: rocky
+
+description: >
+  Upgrade a non-containerized undercloud to a containerized undercloud.
+
+parameters:
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  SkipRhelEnforcement:
+    default: 'false'
+    description: Whether to avoid or not RHEL/OSP policies enforcement on Red Hat.
+                 Mainly for CI purpose.  It shouldn't matter on other distributions
+                 where it's disabled in the role. Set to true to skip the enforcement.
+    type: string
+  DnfStreams:
+    default: []
+    description: List of streams to be configured before updating packages. Each list
+                 element contains a dictionary with the following values defined
+                 module[mandatory], stream[mandatory] and profile[optional]. If the profile
+                 is not specified 'common' will be used instead.
+    type: json
+
+outputs:
+  role_data:
+    description: Role data for the TripleO Undercloud Upgrade service.
+    value:
+      service_name: undercloud_upgrade
+      config_settings: {}
+      deploy_steps_tasks: []
+      docker_config: {}
+      kolla_config: {}
+      puppet_config:
+        config_volume: ''
+        step_config: ''
+        config_image: ''
+      upgrade_tasks:
+        - name: Enforce RHOSP rules regarding subscription.
+          include_role:
+            name: tripleo-redhat-enforce
+          vars:
+            skip_rhel_enforcement: {get_param: SkipRhelEnforcement}
+          when:
+            - step|int == 0
+            - ansible_distribution == 'RedHat'
+            - not (skip_rhel_enforcement | bool)
+        - name: Ensure DNF modules have the right stream
+          vars:
+            dnf_module_list: {get_param: DnfStreams}
+          dnf:
+            name: "@{{ item.module }}:{{ item.stream }}/{{ item.profile|default('common') }}"
+            state: present
+          loop: "{{ dnf_module_list|list }}"
+          when:
+            - step|int == 0
+            - ansible_distribution_major_version >= '8'
+            - dnf_module_list|length > 0
+        - name: Special treatment for OpenvSwitch
+          tripleo_ovs_upgrade:
+          when:
+            - step|int == 2
+          register: ovs_upgrade
+        - name: Always ensure the openvswitch service is enabled and running after upgrades
+          service:
+            name: openvswitch
+            enabled: yes
+            state: started
+          when:
+            - step|int == 2
+            - ovs_upgrade.changed|bool
+        # Exclude ansible until https://github.com/ansible/ansible/issues/56636
+        # is available
+        - name: Update all packages
+          when: step|int == 3
+          yum:
+            name: '*'
+            state: latest
+            exclude: ansible
+        - name: Check that os-net-config has configuration
+          when: step|int == 3
+          stat:
+            path: /etc/os-net-config/config.json
+            get_attributes: false
+            get_checksum: false
+            get_mime: false
+          register: stat_config_json
+        - name: take new os-net-config parameters into account now
+          when:
+            - step|int == 3
+            - stat_config_json.stat.exists
+          command: os-net-config --no-activate -c /etc/os-net-config/config.json -v --detailed-exit-codes
+          register: os_net_config_upgrade
+          failed_when: os_net_config_upgrade.rc not in [0,2]
+          changed_when: os_net_config_upgrade.rc == 2
