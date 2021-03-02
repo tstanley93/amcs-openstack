@@ -1,0 +1,772 @@
+heat_template_version: rocky
+description: 'OpenStack ObjectStorage node configured by Puppet'
+parameters:
+  OvercloudSwiftStorageFlavor:
+    description: DEPRECATED Use OvercloudObjectStorageFlavor instead.
+    default: baremetal
+    type: string
+  OvercloudObjectStorageFlavor:
+    description: Flavor for the ObjectStorage node.
+    default: baremetal
+    type: string
+  SwiftStorageImage:
+    type: string
+    default: overcloud-full
+    description: DEPRECATED Use ObjectStorageImage instead
+  ObjectStorageImage:
+    type: string
+    default: overcloud-full
+    description: The disk image file to use for the role.
+  ImageUpdatePolicy:
+    default: 'REBUILD_PRESERVE_EPHEMERAL'
+    description: What policy to use when reconstructing instances. REBUILD for rebuilds, REBUILD_PRESERVE_EPHEMERAL to preserve /mnt.
+    type: string
+  KeyName:
+    description: Name of an existing Nova key pair to enable SSH access to the instances
+    type: string
+    default: default
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  UpdateIdentifier:
+    default: ''
+    type: string
+    description: >
+      Setting to a previously unused value during stack-update will trigger
+      package update on all nodes
+  Hostname:
+    type: string
+    default: '' # Defaults to Heat created hostname
+  HostnameMap:
+    type: json
+    default: {}
+    description: Optional mapping to override hostnames
+  ObjectStorageIPs:
+    default: {}
+    type: json
+  SwiftStorageIPs:
+    default: {}
+    description: DEPRECATED - use ObjectStorageIPs instead
+    type: json
+  SoftwareConfigTransport:
+    default: POLL_SERVER_CFN
+    description: |
+      How the server should receive the metadata required for software configuration.
+    type: string
+    constraints:
+    - allowed_values: [POLL_SERVER_CFN, POLL_SERVER_HEAT, POLL_TEMP_URL, ZAQAR_MESSAGE]
+  CloudDomain:
+    default: 'localdomain'
+    type: string
+    description: >
+      The DNS domain used for the hosts. This must match the
+      overcloud_domain_name configured on the undercloud.
+  ObjectStorageServerMetadata:
+    default: {}
+    description: >
+      Extra properties or metadata passed to Nova for the created nodes in
+      the overcloud. It's accessible via the Nova metadata API. This option is
+      role-specific and is merged with the values given to the ServerMetadata
+      parameter.
+    type: json
+  SwiftStorageServerMetadata:
+    default: {}
+    description: DEPRECATED - use ObjectStorageServerMetadata instead
+    type: json
+  ServerMetadata:
+    default: {}
+    description: >
+      Extra properties or metadata passed to Nova for the created nodes in
+      the overcloud. It's accessible via the Nova metadata API. This applies to
+      all roles and is merged with a role-specific metadata parameter.
+    type: json
+  ObjectStorageSchedulerHints:
+    type: json
+    description: Optional scheduler hints to pass to nova
+    default: {}
+  NodeIndex:
+    type: number
+    default: 0
+  ServiceNames:
+    type: comma_delimited_list
+    default: []
+  MonitoringSubscriptions:
+    type: comma_delimited_list
+    default: []
+  ServiceMetadataSettings:
+    type: json
+    default: {}
+  ConfigCommand:
+    type: string
+    description: Command which will be run whenever configuration data changes
+    default: os-refresh-config --timeout 14400
+  ConfigCollectSplay:
+    type: number
+    default: 30
+    description: |
+      Maximum amount of time to possibly to delay configuration collection
+      polling. Defaults to 30 seconds. Set to 0 to disable it which will cause
+      the configuration collection to occur as soon as the collection process
+      starts.  This setting is used to prevent the configuration collection
+      processes from polling all at the exact same time.
+  UpgradeInitCommand:
+    type: string
+    description: |
+      Command or script snippet to run on all overcloud nodes to
+      initialize the upgrade process. E.g. a repository switch.
+    default: ''
+  UpgradeInitCommonCommand:
+    type: string
+    description: |
+      Common commands required by the upgrades process. This should not
+      normally be modified by the operator and is set and unset in the
+      major-upgrade-composable-steps.yaml and major-upgrade-converge.yaml
+      environment files.
+    default: ''
+  DeploymentServerBlacklistDict:
+    default: {}
+    type: json
+    description: >
+      Map of server hostnames to blacklist from any triggered
+      deployments. If the value is 1, the server will be blacklisted. This
+      parameter is generated from the parent template.
+  RoleParameters:
+    type: json
+    description: Parameters specific to the role
+    default: {}
+  ObjectStorageControlPlaneSubnet:
+    default: ctlplane-subnet
+    description: |
+      Name of the subnet on ctlplane network for this role.
+    type: string
+  ControlPlaneSubnetCidr:
+    default: ''
+    description: >
+      The subnet CIDR of the control plane network. (The parameter is
+      automatically resolved from the ctlplane subnet's cidr attribute.)
+    type: string
+  ControlPlaneDefaultRoute:
+    default: ''
+    description: The default route of the control plane network. (The parameter
+      is automatically resolved from the ctlplane subnet's gateway_ip attribute.)
+    type: string
+  ControlPlaneStaticRoutes:
+    default: []
+    description: >
+      Routes for the ctlplane network traffic.
+      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
+      Unless the default is changed, the parameter is automatically resolved
+      from the subnet host_routes attribute.
+    type: json
+  DnsServers: # Override this via parameter_defaults
+    default: []
+    description: >
+      DNS servers to use for the Overcloud (2 max for some implementations).
+      If not set the nameservers configured in the ctlplane subnet's
+      dns_nameservers attribute will be used.
+    type: comma_delimited_list
+  StorageInterfaceRoutes:
+    default: []
+    description: >
+      Routes for the storage network traffic.
+      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
+      Unless the default is changed, the parameter is automatically resolved
+      from the subnet host_routes attribute.
+    type: json
+  StorageNetworkVlanID:
+    default: 30
+    description: Vlan ID for the storage network traffic.
+    type: number
+  StorageMgmtInterfaceRoutes:
+    default: []
+    description: >
+      Routes for the storage_mgmt network traffic.
+      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
+      Unless the default is changed, the parameter is automatically resolved
+      from the subnet host_routes attribute.
+    type: json
+  StorageMgmtNetworkVlanID:
+    default: 40
+    description: Vlan ID for the storage_mgmt network traffic.
+    type: number
+  InternalApiInterfaceRoutes:
+    default: []
+    description: >
+      Routes for the internal_api network traffic.
+      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
+      Unless the default is changed, the parameter is automatically resolved
+      from the subnet host_routes attribute.
+    type: json
+  InternalApiNetworkVlanID:
+    default: 20
+    description: Vlan ID for the internal_api network traffic.
+    type: number
+
+  ServerDeletionPolicy:
+    description: Whether to retain or delete servers on deletion of the stack
+    type: string
+    default: delete
+    constraints:
+      - allowed_values: [delete, retain]
+
+  UserData:
+    type: string
+
+
+parameter_groups:
+- label: deprecated
+  description: Do not use deprecated params, they will be removed.
+  parameters:
+  - SwiftStorageServerMetadata
+  - SwiftStorageIPs
+  - SwiftStorageImage
+  - OvercloudSwiftStorageFlavor
+
+conditions:
+  server_blacklisted:
+    equals:
+      - {get_param: [DeploymentServerBlacklistDict, {get_param: Hostname}]}
+      - 1
+  server_not_blacklisted:
+    not:
+      equals:
+        - {get_param: [DeploymentServerBlacklistDict, {get_param: Hostname}]}
+        - 1
+  deprecated_param_image_set:
+    not:
+      equals:
+        - {get_param: SwiftStorageImage}
+        - overcloud-full
+  deprecated_param_flavor_set:
+    not:
+      equals:
+        - {get_param: OvercloudSwiftStorageFlavor}
+        - baremetal
+  ctlplane_fixed_ip_set:
+    or:
+      - not:
+          equals:
+            - {get_param: [ObjectStorageIPs, 'ctlplane', {get_param: NodeIndex}]}
+            - ""
+      - not:
+          equals:
+            - {get_param: [SwiftStorageIPs, 'ctlplane', {get_param: NodeIndex}]}
+            - ""
+      - false  # NOTE(hjensas): Make sure 'or' get's 2 conditions or more
+  ObjectStorage_Storage_fixed_ip_set:
+    not:
+      equals:
+        - {get_param: [ObjectStorageIPs, 'storage', {get_param: NodeIndex}]}
+        - ''
+  storage_interface_routes_set:
+    not:
+      equals:
+        - {get_param: StorageInterfaceRoutes}
+        - []
+  ObjectStorage_StorageMgmt_fixed_ip_set:
+    not:
+      equals:
+        - {get_param: [ObjectStorageIPs, 'storage_mgmt', {get_param: NodeIndex}]}
+        - ''
+  storage_mgmt_interface_routes_set:
+    not:
+      equals:
+        - {get_param: StorageMgmtInterfaceRoutes}
+        - []
+  ObjectStorage_InternalApi_fixed_ip_set:
+    not:
+      equals:
+        - {get_param: [ObjectStorageIPs, 'internal_api', {get_param: NodeIndex}]}
+        - ''
+  internal_api_interface_routes_set:
+    not:
+      equals:
+        - {get_param: InternalApiInterfaceRoutes}
+        - []
+  ctlplane_subnet_cidr_set:
+    not:
+      equals: [{get_param: ControlPlaneSubnetCidr}, '']
+  ctlplane_default_route_set:
+    not:
+      equals: [{get_param: ControlPlaneDefaultRoute}, '']
+  ctlplane_static_routes_set:
+    not:
+        equals: [{get_param: ControlPlaneStaticRoutes}, []]
+  dnsservers_set:
+    not:
+      equals: [{get_param: DnsServers}, []]
+
+resources:
+  SwiftStorage:
+    type: OS::TripleO::ObjectStorageServer
+    deletion_policy: {get_param: ServerDeletionPolicy}
+    properties:
+      image:
+        if:
+          - deprecated_param_image_set
+          - {get_param: SwiftStorageImage}
+          - {get_param: ObjectStorageImage}
+      image_update_policy: {get_param: ImageUpdatePolicy}
+      flavor:
+        if:
+          - deprecated_param_flavor_set
+          - {get_param: OvercloudSwiftStorageFlavor}
+          - {get_param: OvercloudObjectStorageFlavor}
+      key_name: {get_param: KeyName}
+      networks:
+        - if:
+          - ctlplane_fixed_ip_set
+          - network: ctlplane
+            subnet: {get_param: ObjectStorageControlPlaneSubnet}
+            fixed_ip:
+              yaql:
+                expression: $.data.where(not isEmpty($)).first()
+                data:
+                  - get_param: [ObjectStorageIPs, 'ctlplane', {get_param: NodeIndex}]
+                  - get_param: [SwiftStorageIPs, 'ctlplane', {get_param: NodeIndex}]
+          - network: ctlplane
+            subnet: {get_param: ObjectStorageControlPlaneSubnet}
+      user_data_format: SOFTWARE_CONFIG
+      user_data: {get_param: UserData}
+      name:
+        yaql:
+          expression: $.data.hostname_map.get($.data.hostname, $.data.hostname).toLower()
+          data:
+            hostname: {get_param: Hostname}
+            hostname_map: {get_param: HostnameMap}
+      software_config_transport: {get_param: SoftwareConfigTransport}
+      metadata:
+        map_merge:
+          - {get_param: ServerMetadata}
+          - {get_param: SwiftStorageServerMetadata}
+          - {get_param: ObjectStorageServerMetadata}
+          - {get_param: ServiceMetadataSettings}
+      scheduler_hints: {get_param: ObjectStorageSchedulerHints}
+  StoragePort:
+    type: OS::TripleO::ObjectStorage::Ports::StoragePort
+    properties:
+      PortName:
+        list_join:
+          - '_'
+          - - {get_attr: [SwiftStorage, name]}
+            - Storage
+      ControlPlaneIP: {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+      FixedIPs:
+        if:
+          - ObjectStorage_Storage_fixed_ip_set
+          - [{ip_address: {get_param: [ObjectStorageIPs, 'storage', {get_param: NodeIndex}]}}]
+          - [{subnet: storage_subnet}]
+      ControlPlaneSubnetCidr:
+        if:
+          - ctlplane_subnet_cidr_set
+          - {get_param: ControlPlaneSubnetCidr}
+          # DeployedServer docs specify 'cidr: 24' in DeployedServerPortMap.
+          # Support both that, and 'cidr: 192.168.24.0/24'.
+          - yaql:
+              expression: str("{0}".format($.data).split("/")[-1])
+              data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, cidr]}
+      IPPool:
+        map_merge:
+          - {get_param: SwiftStorageIPs}
+          - {get_param: ObjectStorageIPs}
+      NodeIndex: {get_param: NodeIndex}
+  StorageMgmtPort:
+    type: OS::TripleO::ObjectStorage::Ports::StorageMgmtPort
+    properties:
+      PortName:
+        list_join:
+          - '_'
+          - - {get_attr: [SwiftStorage, name]}
+            - StorageMgmt
+      ControlPlaneIP: {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+      FixedIPs:
+        if:
+          - ObjectStorage_StorageMgmt_fixed_ip_set
+          - [{ip_address: {get_param: [ObjectStorageIPs, 'storage_mgmt', {get_param: NodeIndex}]}}]
+          - [{subnet: storage_mgmt_subnet}]
+      ControlPlaneSubnetCidr:
+        if:
+          - ctlplane_subnet_cidr_set
+          - {get_param: ControlPlaneSubnetCidr}
+          # DeployedServer docs specify 'cidr: 24' in DeployedServerPortMap.
+          # Support both that, and 'cidr: 192.168.24.0/24'.
+          - yaql:
+              expression: str("{0}".format($.data).split("/")[-1])
+              data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, cidr]}
+      IPPool:
+        map_merge:
+          - {get_param: SwiftStorageIPs}
+          - {get_param: ObjectStorageIPs}
+      NodeIndex: {get_param: NodeIndex}
+  InternalApiPort:
+    type: OS::TripleO::ObjectStorage::Ports::InternalApiPort
+    properties:
+      PortName:
+        list_join:
+          - '_'
+          - - {get_attr: [SwiftStorage, name]}
+            - InternalApi
+      ControlPlaneIP: {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+      FixedIPs:
+        if:
+          - ObjectStorage_InternalApi_fixed_ip_set
+          - [{ip_address: {get_param: [ObjectStorageIPs, 'internal_api', {get_param: NodeIndex}]}}]
+          - [{subnet: internal_api_subnet}]
+      ControlPlaneSubnetCidr:
+        if:
+          - ctlplane_subnet_cidr_set
+          - {get_param: ControlPlaneSubnetCidr}
+          # DeployedServer docs specify 'cidr: 24' in DeployedServerPortMap.
+          # Support both that, and 'cidr: 192.168.24.0/24'.
+          - yaql:
+              expression: str("{0}".format($.data).split("/")[-1])
+              data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, cidr]}
+      IPPool:
+        map_merge:
+          - {get_param: SwiftStorageIPs}
+          - {get_param: ObjectStorageIPs}
+      NodeIndex: {get_param: NodeIndex}
+
+  NetworkConfig:
+    type: OS::TripleO::ObjectStorage::Net::SoftwareConfig
+    properties:
+      ControlPlaneIp: "{{ ctlplane_ip }}"
+      ControlPlaneSubnetCidr:
+        if:
+          - ctlplane_subnet_cidr_set
+          - {get_param: ControlPlaneSubnetCidr}
+          - yaql:
+              expression: str("{0}".format($.data).split("/")[-1])
+              data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, cidr]}
+
+      ControlPlaneDefaultRoute:
+        if:
+          - ctlplane_default_route_set
+          - {get_param: ControlPlaneDefaultRoute}
+          - {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, gateway_ip]}
+      ControlPlaneStaticRoutes:
+        if:
+          - ctlplane_static_routes_set
+          - {get_param: ControlPlaneStaticRoutes}
+          - yaql:
+              expression: switch(isList($.data) => $.data, true => [])
+              data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, host_routes]}
+      ControlPlaneMtu:
+        yaql:
+          expression: switch(isInteger($.data) => $.data, true => 1500)
+          data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, network, mtu]}
+      DnsServers:
+        if:
+          - dnsservers_set
+          - {get_param: DnsServers}
+          - {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, dns_nameservers]}
+      StorageIpSubnet: "{{ storage_ip ~ '/' ~ storage_cidr }}"
+      StorageInterfaceRoutes:
+        if:
+          - storage_interface_routes_set
+          - {get_param: StorageInterfaceRoutes}
+          - {get_attr: [StoragePort, host_routes]}
+      StorageMtu: {get_attr: [StoragePort, mtu]}
+      StorageNetworkVlanID: {get_param: StorageNetworkVlanID}
+      StorageMgmtIpSubnet: "{{ storage_mgmt_ip ~ '/' ~ storage_mgmt_cidr }}"
+      StorageMgmtInterfaceRoutes:
+        if:
+          - storage_mgmt_interface_routes_set
+          - {get_param: StorageMgmtInterfaceRoutes}
+          - {get_attr: [StorageMgmtPort, host_routes]}
+      StorageMgmtMtu: {get_attr: [StorageMgmtPort, mtu]}
+      StorageMgmtNetworkVlanID: {get_param: StorageMgmtNetworkVlanID}
+      InternalApiIpSubnet: "{{ internal_api_ip ~ '/' ~ internal_api_cidr }}"
+      InternalApiInterfaceRoutes:
+        if:
+          - internal_api_interface_routes_set
+          - {get_param: InternalApiInterfaceRoutes}
+          - {get_attr: [InternalApiPort, host_routes]}
+      InternalApiMtu: {get_attr: [InternalApiPort, mtu]}
+      InternalApiNetworkVlanID: {get_param: InternalApiNetworkVlanID}
+
+  NetIpMap:
+    type: OS::TripleO::Network::Ports::NetIpMap
+    properties:
+      ControlPlaneIp: {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+      ControlPlaneSubnetCidr:
+        if:
+          - ctlplane_subnet_cidr_set
+          - {get_param: ControlPlaneSubnetCidr}
+          - yaql:
+              expression: str("{0}".format($.data).split("/")[-1])
+              data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, cidr]}
+      StorageIp: {get_attr: [StoragePort, ip_address]}
+      StorageIpSubnet: {get_attr: [StoragePort, ip_subnet]}
+      StorageIpUri: {get_attr: [StoragePort, ip_address_uri]}
+      StorageMgmtIp: {get_attr: [StorageMgmtPort, ip_address]}
+      StorageMgmtIpSubnet: {get_attr: [StorageMgmtPort, ip_subnet]}
+      StorageMgmtIpUri: {get_attr: [StorageMgmtPort, ip_address_uri]}
+      InternalApiIp: {get_attr: [InternalApiPort, ip_address]}
+      InternalApiIpSubnet: {get_attr: [InternalApiPort, ip_subnet]}
+      InternalApiIpUri: {get_attr: [InternalApiPort, ip_address_uri]}
+
+  NetHostMap:
+    type: OS::Heat::Value
+    properties:
+      type: json
+      value:
+        storage:
+          fqdn:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - storage
+              - {get_param: CloudDomain}
+          short:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - storage
+        storage_mgmt:
+          fqdn:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - storagemgmt
+              - {get_param: CloudDomain}
+          short:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - storagemgmt
+        internal_api:
+          fqdn:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - internalapi
+              - {get_param: CloudDomain}
+          short:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - internalapi
+        ctlplane:
+          fqdn:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - ctlplane
+              - {get_param: CloudDomain}
+          short:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - ctlplane
+        canonical:
+          fqdn:
+            list_join:
+            - '.'
+            - - {get_attr: [SwiftStorage, name]}
+              - {get_param: CloudDomain}
+          short:
+            - {get_attr: [SwiftStorage, name]}
+
+  PreNetworkConfig:
+    type: OS::TripleO::ObjectStorage::PreNetworkConfig
+    properties:
+      server: {get_resource: SwiftStorage}
+      RoleParameters: {get_param: RoleParameters}
+      ServiceNames: {get_param: ServiceNames}
+      deployment_actions: {get_attr: [DeploymentActions, value]}
+
+  # Resource for site-specific injection of root certificate
+  NodeTLSCAData:
+    depends_on: PreNetworkConfig
+    type: OS::TripleO::NodeTLSCAData
+    properties:
+      server: {get_resource: SwiftStorage}
+
+  # Hook for site-specific additional pre-deployment config, e.g extra hieradata
+  ObjectStorageExtraConfigPre:
+    type: OS::TripleO::ObjectStorageExtraConfigPre
+    # We have to use conditions here so that we don't break backwards
+    # compatibility with templates everywhere
+    condition: server_not_blacklisted
+    properties:
+        server: {get_resource: SwiftStorage}
+
+  # Hook for site-specific additional pre-deployment config,
+  # applying to all nodes, e.g node registration/unregistration
+  NodeExtraConfig:
+    depends_on:
+      - ObjectStorageExtraConfigPre
+      - NodeTLSCAData
+    type: OS::TripleO::NodeExtraConfig
+    # We have to use conditions here so that we don't break backwards
+    # compatibility with templates everywhere
+    condition: server_not_blacklisted
+    properties:
+        server: {get_resource: SwiftStorage}
+
+  DeploymentActions:
+    type: OS::Heat::Value
+    properties:
+      value:
+        if:
+          - server_not_blacklisted
+          - ['CREATE', 'UPDATE']
+          - []
+
+  SwiftStorageAnsibleHostVars:
+    type: OS::Heat::Value
+    properties:
+      type: json
+      value:
+        ctlplane_subnet_cidr:
+          if:
+            - ctlplane_subnet_cidr_set
+            - {get_param: ControlPlaneSubnetCidr}
+            - yaql:
+                expression: str("{0}".format($.data).split("/")[-1])
+                data: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, cidr]}
+        storage_cidr: {get_attr: [StoragePort, cidr]}
+        fqdn_storage: {get_attr: [NetHostMap, value, storage, fqdn]}
+        storage_mgmt_cidr: {get_attr: [StorageMgmtPort, cidr]}
+        fqdn_storage_mgmt: {get_attr: [NetHostMap, value, storage_mgmt, fqdn]}
+        internal_api_cidr: {get_attr: [InternalApiPort, cidr]}
+        fqdn_internal_api: {get_attr: [NetHostMap, value, internal_api, fqdn]}
+        network_cidrs:
+          Storage_cidr: {get_attr: [StoragePort, cidr]}
+          StorageMgmt_cidr: {get_attr: [StorageMgmtPort, cidr]}
+          InternalApi_cidr: {get_attr: [InternalApiPort, cidr]}
+        fqdn_ctlplane: {get_attr: [NetHostMap, value, ctlplane, fqdn]}
+        fqdn_canonical: {get_attr: [NetHostMap, value, canonical, fqdn]}
+        hostname_resolve_network: {get_param: [ServiceNetMap, ObjectStorageHostnameResolveNetwork]}
+
+outputs:
+  ansible_host_vars_map:
+    description: |
+      Map of Ansible variables specific per host.
+      This map is used to construct the AnsibleHostVarsMap output for the
+      ansible vars per host in config-download.
+    value:
+      map_replace:
+        - host: {get_attr: [SwiftStorageAnsibleHostVars, value]}
+        - keys:
+            host: {get_attr: [SwiftStorage, name]}
+  ip_address:
+    description: IP address of the server in the ctlplane network
+    value: {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+  blacklist_ip_address:
+    description: IP address of the server if the server is blacklisted, otherwise this output will be an empty string
+    value:
+      if:
+        - server_blacklisted
+        - {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+        - ""
+  blacklist_hostname:
+    description: Hostname of the server if the server is blacklisted, otherwise this output will be an empty string
+    value:
+      if:
+        - server_blacklisted
+        - {get_attr: [SwiftStorage, name]}
+        - ""
+  hostname:
+    description: Hostname of the server
+    value: {get_attr: [SwiftStorage, name]}
+  hostname_map:
+    description: Mapping of network names to hostnames
+    value:
+      storage: {get_attr: [NetHostMap, value, storage, fqdn]}
+      storage_mgmt: {get_attr: [NetHostMap, value, storage_mgmt, fqdn]}
+      internal_api: {get_attr: [NetHostMap, value, internal_api, fqdn]}
+      ctlplane: {get_attr: [NetHostMap, value, ctlplane, fqdn]}
+      canonical: {get_attr: [NetHostMap, value, canonical, fqdn]}
+  hostname_network_config_map:
+    description: Mapping of hostname to NetworkConfig resource
+    value:
+      map_replace:
+        - HOSTNAME: {get_resource: NetworkConfig}
+        - keys:
+            HOSTNAME: {get_attr:[SwiftStorage, name]}
+  hosts_entry:
+    value:
+      - str_replace:
+          template: PRIMARYIP PRIMARYHOST.DOMAIN PRIMARYHOST
+          params:
+            PRIMARYIP: {get_attr: [NetIpMap, net_ip_map, {get_param: [ServiceNetMap, ObjectStorageHostnameResolveNetwork]}]}
+            DOMAIN: {get_param: CloudDomain}
+            PRIMARYHOST: {get_attr: [SwiftStorage, name]}
+      - str_replace:
+          template: StorageIP StorageHOST.DOMAIN StorageHOST
+          params:
+            DOMAIN: {get_param: CloudDomain}
+            StorageIP: {get_attr: [StoragePort, ip_address]}
+            StorageHOST: {get_attr: [NetHostMap, value, storage, short]}
+            StorageMgmtIP: {get_attr: [StorageMgmtPort, ip_address]}
+            StorageMgmtHOST: {get_attr: [NetHostMap, value, storage_mgmt, short]}
+            InternalApiIP: {get_attr: [InternalApiPort, ip_address]}
+            InternalApiHOST: {get_attr: [NetHostMap, value, internal_api, short]}
+      - str_replace:
+          template: StorageMgmtIP StorageMgmtHOST.DOMAIN StorageMgmtHOST
+          params:
+            DOMAIN: {get_param: CloudDomain}
+            StorageIP: {get_attr: [StoragePort, ip_address]}
+            StorageHOST: {get_attr: [NetHostMap, value, storage, short]}
+            StorageMgmtIP: {get_attr: [StorageMgmtPort, ip_address]}
+            StorageMgmtHOST: {get_attr: [NetHostMap, value, storage_mgmt, short]}
+            InternalApiIP: {get_attr: [InternalApiPort, ip_address]}
+            InternalApiHOST: {get_attr: [NetHostMap, value, internal_api, short]}
+      - str_replace:
+          template: InternalApiIP InternalApiHOST.DOMAIN InternalApiHOST
+          params:
+            DOMAIN: {get_param: CloudDomain}
+            StorageIP: {get_attr: [StoragePort, ip_address]}
+            StorageHOST: {get_attr: [NetHostMap, value, storage, short]}
+            StorageMgmtIP: {get_attr: [StorageMgmtPort, ip_address]}
+            StorageMgmtHOST: {get_attr: [NetHostMap, value, storage_mgmt, short]}
+            InternalApiIP: {get_attr: [InternalApiPort, ip_address]}
+            InternalApiHOST: {get_attr: [NetHostMap, value, internal_api, short]}
+      - str_replace:
+          template: CTLPLANEIP CTLPLANEHOST.DOMAIN CTLPLANEHOST
+          params:
+            DOMAIN: {get_param: CloudDomain}
+            CTLPLANEIP: {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+            CTLPLANEHOST: {get_attr: [NetHostMap, value, ctlplane, short]}
+  nova_server_resource:
+    description: Heat resource handle for ObjectStorage server
+    value:
+      {get_resource: SwiftStorage}
+    condition: server_not_blacklisted
+  deployed_server_port_map:
+    description: |
+      Map of Heat created hostname of the server to ip address. This is the
+      hostname before it has been mapped with the HostnameMap parameter, and
+      the IP address from the ctlplane network. This map can be used to construct
+      the DeployedServerPortMap parameter when using split-stack.
+    value:
+      map_replace:
+        - hostname:
+            fixed_ips:
+              - ip_address: {get_attr: [SwiftStorage, networks, ctlplane, 0]}
+            subnets:
+              - cidr: {get_attr: [SwiftStorage, addresses, ctlplane, 0, subnets, 0, cidr]}
+        - keys:
+            hostname:
+              list_join:
+                - '-'
+                - - {get_param: Hostname}
+                  - ctlplane
+  storage_ip_address:
+    description: IP address of the server in the Storage network
+    value: {get_attr: [StoragePort, ip_address]}
+  storage_mgmt_ip_address:
+    description: IP address of the server in the StorageMgmt network
+    value: {get_attr: [StorageMgmtPort, ip_address]}
+  internal_api_ip_address:
+    description: IP address of the server in the InternalApi network
+    value: {get_attr: [InternalApiPort, ip_address]}

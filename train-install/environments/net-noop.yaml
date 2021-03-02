@@ -1,0 +1,7 @@
+# This disables network configuration entirely (No-op).
+resource_registry:
+  OS::TripleO::Controller::Net::SoftwareConfig: ../net-config-noop.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig: ../net-config-noop.yaml
+  OS::TripleO::BlockStorage::Net::SoftwareConfig: ../net-config-noop.yaml
+  OS::TripleO::ObjectStorage::Net::SoftwareConfig: ../net-config-noop.yaml
+  OS::TripleO::CephStorage::Net::SoftwareConfig: ../net-config-noop.yaml
