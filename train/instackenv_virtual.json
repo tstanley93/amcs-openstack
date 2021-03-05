@@ -1,0 +1,33 @@
+{
+    "nodes":[
+      {
+        "name": "control.splab.pdsea.f5net.com",
+        "pm_type":"ipmi",
+        "pm_user":"root",
+        "pm_password":"calvin",
+        "pm_addr":"10.144.188.23",
+        "cpu":"56",
+        "memory":"65536",
+        "disk":"222",
+        "arch":"x86_64",
+        "mac":[
+          "f8:f2:1e:29:b8:98"
+        ]
+      },
+      {
+        "name": "compute.splab.pdsea.f5net.com",
+        "pm_type":"ipmi",
+        "pm_user":"root",
+        "pm_password":"calvin",
+        "pm_addr":"10.144.188.23",
+        "cpu":"56",
+        "memory":"65536",
+        "disk":"222",
+        "arch":"x86_64",
+        "mac":[
+          "f8:f2:1e:29:b8:98"
+        ]
+      }
+    ]
+  }
+  

@@ -1,12 +1,12 @@
 resource_registry:
   OS::TripleO::Server: /usr/share/openstack-tripleo-heat-templates/deployed-server/deployed-server.yaml
-  OS::TripleO::DeployedServer::ControlPlanePort: OS::Neutron::Port
+  OS::TripleO::DeployedServer::ControlPlanePort: /usr/share/openstack-tripleo-heat-templates/deployed-server/deployed-neutron-port.yaml
   OS::TripleO::DeployedServer::Bootstrap: OS::Heat::None
 
   # Network configuration assignments for the Controller
-  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/controller.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller.yaml
   # Network configuration assignments for the Compute
-  OS::TripleO::Compute::Net::SoftwareConfig: /home/stack/templates/compute.yaml
+  OS::TripleO::virtCompute::Net::SoftwareConfig: /home/stack/templates/virtcompute.yaml
   # Network configuration assignments for the BlockStorage
   OS::TripleO::BlockStorage::Net::SoftwareConfig: /usr/share/openstack-tripleo-heat-templates/network/config/multiple-nics-vlans/cinder-storage.yaml
   # Network configuration assignments for the ObjectStorage
@@ -23,4 +23,20 @@ parameter_defaults:
   HostnameMap:
     overcloud-controller-0: controller
     overcloud-novacompute-0: compute
-  OvercloudGaleraFlavor: oooq_galera
+  DeployedServerPortMap:
+    controller0-ctlplane:
+      fixed_ips:
+        - ip_address: 10.10.6.12
+      subnets:
+        - cidr: 10.10.6.0/24
+      network:
+        tags:
+          - 10.10.6.0/24
+    compute0-ctlplane:
+      fixed_ips:
+        - ip_address: 10.10.6.8
+      subnets:
+        - cidr: 10.10.6.0/24
+      network:
+        tags:
+          - 10.10.6.0/24
