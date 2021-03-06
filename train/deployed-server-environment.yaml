@@ -40,3 +40,32 @@ parameter_defaults:
       network:
         tags:
           - 10.10.6.0/24
+    # Define the DNS servers (maximum 2) for the overcloud nodes
+    DnsServers: ["172.27.1.1","172.27.2.1"]
+    # List of Neutron network types for tenant networks (will be used in order)
+    NeutronNetworkType: 'vxlan,vlan,flat'
+    # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
+    NeutronTunnelTypes: 'vxlan'
+    # NeutronBridgeMappings:
+    #     - float:br-ex
+    #     - provider:br-data
+    #     - sfr1:sfr1
+    #     - sfr2:sfr2
+    # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
+    #NeutronNetworkVLANRanges: 
+    #    - provider:90:91
+    #    - provider:99:100
+    #    - float:10:10
+    #NeutronFlatNetworks: "sfr1,sfr2,provider,float"
+    NeutronExternalNetworkBridge: "''"
+    # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
+    # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
+    BondInterfaceOvsOptions: ""
+    ComputeExtraConfig:        
+      nova::disk_allocation_ratio: 4.0
+    ComputeSchedulerHints:
+      'capabilities:profile': 'compute-%index%'
+    TimeZone: 'America/Los_Angeles'
+    ControllerCount: 1
+    ComputeCount: 1
+    NetworkDeploymentActions: ['CREATE','UPDATE']
