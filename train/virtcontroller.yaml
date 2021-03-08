@@ -230,8 +230,6 @@ resources:
                     list_concat_unique:
                       - get_param: InternalApiInterfaceRoutes
                 - type: vlan
-                    mtu:
-                      get_param: ExternalMtu
                     vlan_id:
                       get_param: ExternalNetworkVlanID
                     addresses:
