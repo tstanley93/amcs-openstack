@@ -21,8 +21,8 @@ parameter_defaults:
   ControlPlaneDefaultRoute: 10.10.6.22
   EC2MetadataIp: 10.10.6.22
   HostnameMap:
-    overcloud-controller-0: controller
-    overcloud-novacompute-0: compute
+    thomas01-controller-0: controller
+    thomas01-novacompute-0: compute
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
