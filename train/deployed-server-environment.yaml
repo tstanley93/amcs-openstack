@@ -17,7 +17,7 @@ resource_registry:
 
 parameter_defaults:
   EnablePackageInstall: True
-  NeutronPublicInterface: eth0
+  NeutronPublicInterface: eth1
   ControlPlaneDefaultRoute: 10.10.6.22
   EC2MetadataIp: 10.10.6.22
   HostnameMap:
