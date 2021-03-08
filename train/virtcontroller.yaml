@@ -230,17 +230,19 @@ resources:
                     list_concat_unique:
                       - get_param: InternalApiInterfaceRoutes
                 - type: vlan
-                    vlan_id:
-                      get_param: ExternalNetworkVlanID
-                    addresses:
-                    - ip_netmask:
-                        get_param: ExternalIpSubnet
-                    routes:
-                      list_concat_unique:
-                        - get_param: ExternalInterfaceRoutes
-                        - - default: true
-                            next_hop:
-                              get_param: ExternalInterfaceDefaultRoute
+                  mtu:
+                    get_param: ExternalMtu
+                  vlan_id:
+                    get_param: ExternalNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: ExternalIpSubnet
+                  routes:
+                    list_concat_unique:
+                      - get_param: ExternalInterfaceRoutes
+                      - - default: true
+                          next_hop:
+                            get_param: ExternalInterfaceDefaultRoute
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
