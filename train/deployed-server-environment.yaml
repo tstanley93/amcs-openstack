@@ -104,11 +104,11 @@ parameter_defaults:
 
 
   # Customize the IP subnet to match the local environment
-  ManagementNetCidr: '10.0.1.0/24'
+  ManagementNetCidr: '10.10.6.0/24'
   # Customize the IP range to use for static IPs and VIPs
-  ManagementAllocationPools: [{'start': '10.0.1.4', 'end': '10.0.1.250'}]
+  ManagementAllocationPools: [{'start': '10.10.6.4', 'end': '10.10.6.20'}]
   # Gateway router for routable networks
-  ManagementInterfaceDefaultRoute: '10.0.1.1'
+  ManagementInterfaceDefaultRoute: '10.10.6.1'
   # Customize the VLAN ID to match the local environment
   ManagementNetworkVlanID: 60
   # Define the DNS servers (maximum 2) for the overcloud nodes
