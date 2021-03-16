@@ -54,53 +54,29 @@ parameter_defaults:
   # EC2MetadataIp: It is no longer a requirement to provide this parameter. The
   #                attribute is resolved from the ctlplane subnet(s).
   #
-  # Customize the IP subnet to match the local environment
-  StorageNetCidr: '172.16.1.0/24'
-  # Customize the IP range to use for static IPs and VIPs
-  StorageAllocationPools: [{'start': '172.16.1.4', 'end': '172.16.1.250'}]
-  # Customize the VLAN ID to match the local environment
-  StorageNetworkVlanID: 30
-
-
-  # Customize the IP subnet to match the local environment
-  StorageMgmtNetCidr: '172.16.3.0/24'
-  # Customize the IP range to use for static IPs and VIPs
-  StorageMgmtAllocationPools: [{'start': '172.16.3.4', 'end': '172.16.3.250'}]
-  # Customize the VLAN ID to match the local environment
-  StorageMgmtNetworkVlanID: 40
-
-
-  # Customize the IP subnet to match the local environment
-  InternalApiNetCidr: '172.16.2.0/24'
-  # Customize the IP range to use for static IPs and VIPs
-  InternalApiAllocationPools: [{'start': '172.16.2.4', 'end': '172.16.2.250'}]
-  # Customize the VLAN ID to match the local environment
-  InternalApiNetworkVlanID: 20
-
-
-  # Customize the IP subnet to match the local environment
-  TenantNetCidr: '172.16.0.0/24'
-  # Customize the IP range to use for static IPs and VIPs
-  TenantAllocationPools: [{'start': '172.16.0.4', 'end': '172.16.0.250'}]
-  # Customize the VLAN ID to match the local environment
-  TenantNetworkVlanID: 50
-  # MTU of the underlying physical network. Neutron uses this value to
-  # calculate MTU for all virtual network components. For flat and VLAN
-  # networks, neutron uses this value without modification. For overlay
-  # networks such as VXLAN, neutron automatically subtracts the overlay
-  # protocol overhead from this value.
-  TenantNetPhysnetMtu: 1500
-
-
-  # Customize the IP subnet to match the local environment
-  ExternalNetCidr: '10.0.0.0/24'
-  # Customize the IP range to use for static IPs and VIPs
-  # Leave room if the external network is also used for floating IPs
-  ExternalAllocationPools: [{'start': '10.0.0.4', 'end': '10.0.0.250'}]
-  # Gateway router for routable networks
-  ExternalInterfaceDefaultRoute: '10.0.0.1'
-  # Customize the VLAN ID to match the local environment
+  # Customize the IP subnets to match the local environment
+  StorageNetCidr: '10.12.0.0/24'
+  StorageMgmtNetCidr: '10.94.0.0/16'
+  InternalApiNetCidr: '10.92.0.0/16'
+  TenantNetCidr: '10.95.0.0/16'
+  ExternalNetCidr: '10.144.184.0/22'
+  ManagementNetCidr: '10.0.1.0/24'
+  # Customize the VLAN IDs to match the local environment
+  StorageNetworkVlanID: 12
+  StorageMgmtNetworkVlanID: 93
+  InternalApiNetworkVlanID: 94
+  TenantNetworkVlanID: 95
   ExternalNetworkVlanID: 10
+  ManagementNetworkVlanID: 60
+  StorageAllocationPools: [{'start': '10.12.0.50', 'end': '10.12.0.99'}]
+  StorageMgmtAllocationPools: [{'start': '10.94.1.10', 'end': '10.94.1.200'}]
+  InternalApiAllocationPools: [{'start': '10.92.1.10', 'end': '10.92.1.200'}]
+  TenantAllocationPools: [{'start': '10.95.1.10', 'end': '10.95.1.200'}]
+  # Leave room if the external network is also used for floating IPs
+  ExternalAllocationPools: [{'start': '10.144.184.35', 'end': '10.144.184.65'}]
+  ManagementAllocationPools: [{'start': '10.0.1.4', 'end': '10.0.1.250'}]
+  # Gateway routers for routable networks
+  ExternalInterfaceDefaultRoute: '10.144.187.254'
 
 
   # Customize the IP subnet to match the local environment
