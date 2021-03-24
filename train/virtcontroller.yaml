@@ -180,7 +180,7 @@ resources:
                 use_dhcp: false
                 members:
                 - type: interface
-                  name: nic3
+                  name: nic2
                   mtu:
                     get_param: TenantMtu
                   use_dhcp: false
