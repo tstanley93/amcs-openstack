@@ -22,11 +22,11 @@ parameter_defaults:
   EC2MetadataIp: 10.10.6.22
   HostnameMap:
     thomas04-controller-0: controller1
-    thomas04-controller-0: controller2
-    thomas04-controller-0: controller3
+    thomas04-controller-1: controller2
+    thomas04-controller-1: controller3
     thomas04-novacompute-0: compute1
   DeployedServerPortMap:
-    controller0-ctlplane:
+    thomas04-controller0-ctlplane:
       fixed_ips:
         - ip_address: 10.10.6.5
       subnets:
@@ -34,7 +34,7 @@ parameter_defaults:
       network:
         tags:
           - 10.10.6.0/24
-    controller1-ctlplane:
+    thomas04-controller1-ctlplane:
       fixed_ips:
         - ip_address: 10.10.6.11
       subnets:
@@ -42,7 +42,7 @@ parameter_defaults:
       network:
         tags:
           - 10.10.6.0/24
-    controller2-ctlplane:
+    thomas04-controller2-ctlplane:
       fixed_ips:
         - ip_address: 10.10.6.8
       subnets:
@@ -50,7 +50,7 @@ parameter_defaults:
       network:
         tags:
           - 10.10.6.0/24
-    compute0-ctlplane:
+    thomas04-compute0-ctlplane:
       fixed_ips:
         - ip_address: 10.10.6.10
       subnets:
