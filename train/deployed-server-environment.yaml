@@ -23,7 +23,7 @@ parameter_defaults:
   HostnameMap:
     thomas05-controller-0: controller0
     thomas05-controller-1: controller1
-    thomas05-controller-1: controller2
+    thomas05-controller-2: controller2
     thomas05-novacompute-0: compute0
   DeployedServerPortMap:
     controller0-ctlplane:
