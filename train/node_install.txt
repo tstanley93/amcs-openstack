@@ -1,0 +1,77 @@
+### Create External Networks
+openstack network create storagenet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 12
+openstack network create storagemgmtnet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 93
+openstack network create internalapinet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 94
+openstack network create tenantnet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 95
+
+### Create External Subnets
+openstack subnet create storagenet --network storagenet --subnet-range 10.12.0.0/24 --dhcp --allocation-pool start=10.12.0.70,end=10.12.0.99
+openstack subnet create storagemgmtnet --network storagemgmtnet --subnet-range 10.94.0.0/16 --dhcp --allocation-pool start=10.94.1.100,end=10.94.1.200
+openstack subnet create internalapinet --network internalapinet --subnet-range 10.92.0.0/16 --dhcp --allocation-pool start=10.92.1.100,end=10.92.1.200
+openstack subnet create tenantnet --network tenantnet --subnet-range 10.95.0.0/16 --dhcp --allocation-pool start=10.95.1.100,end=10.95.1.200
+
+### Trunk Create
+openstack port create --network pdn_ex compute1-pdn_ex-parent-port
+openstack port create --network tenantnet compute1-tenantnet-sub-port
+openstack port create --network storagenet compute1-storagenet-sub-port
+openstack port create --network storagemgmtnet compute1-storagemgmtnet-sub-port
+openstack port create --network internalapinet compute1-internalapinet-sub-port
+openstack port create --network public compute1-public-sub-port
+openstack network trunk create --parent-port compute1-pdn_ex-parent-port compute1-trunk
+openstack network trunk set \
+--subport port=compute1-storagenet-sub-port,segmentation-type=vlan,segmentation-id=12 \
+--subport port=compute1-storagemgmtnet-sub-port,segmentation-type=vlan,segmentation-id=93 \
+--subport port=compute1-internalapinet-sub-port,segmentation-type=vlan,segmentation-id=94 \
+--subport port=compute1-tenantnet-sub-port,segmentation-type=vlan,segmentation-id=95 \
+--subport port=compute1-public-sub-port,segmentation-type=vlan,segmentation-id=10 \
+compute1-trunk
+openstack port create --network ha_ts compute1-ha_ts-port
+
+### Server Create
+openstack server create \
+--key-name stanley01 \
+--image "openstack_16_image_3" \
+--flavor m1.large \
+--nic port-id=307dbdb2-1991-45c5-baf9-11c3461ffe5e \
+--nic port-id=eb52d94d-bcc7-402e-bda5-a951529e6153 \
+compute1
+
+#### Install Software
+sudo yum -y update
+sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210118183911.2cfaa48.el8.noarch.rpm
+sudo -E tripleo-repos -b train current
+sudo yum install -y python3-heat-agent*
+
+#####  Add Stack User
+sudo su -
+useradd stack
+passwd stack  # specify a password
+echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack
+chmod 0440 /etc/sudoers.d/stack
+vi /etc/ssh/sshd_config
+uncomment PasswordAuthentication yes
+comment PasswordAuthentication no
+systemctl restart sshd.service
+exit
+
+### Back on Director
+ssh-copy-id stack@192.168.24.2
+
+### Back to Node
+sudo vi /etc/ssh/sshd_config
+comment PasswordAuthentication yes
+uncomment PasswordAuthentication no
+:wq
+sudo systemctl restart sshd.service
+
+### Removed extra NIC config
+sudo rm /etc/sysconfig/network-scripts/ifcfg-ens*
+sudo systemctl restart network.service	
+
+### Node Ready
+exit
+
+### After Creating the Node
+sudo vi /etc/hostname
+sudo vi /etc/hosts
+Add hostname to end of string
