@@ -75,3 +75,5 @@ exit
 sudo vi /etc/hostname
 sudo vi /etc/hosts
 Add hostname to end of string
+sudo ip r del default
+sudo ip r add default via 10.10.6.22

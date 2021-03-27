@@ -16,6 +16,7 @@ resource_registry:
 
 
 parameter_defaults:
+  NeutronOVSFirewallDriver: noop
   EnablePackageInstall: True
   NeutronPublicInterface: eth1
   ControlPlaneDefaultRoute: 10.10.6.22
