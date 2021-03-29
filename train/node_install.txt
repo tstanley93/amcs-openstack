@@ -71,7 +71,9 @@ sudo systemctl restart network.service
 ### Node Ready
 exit
 
-### After Creating the Node
+#####################################################################
+### After Creating the Node  ########################################
+#####################################################################
 sudo vi /etc/hostname
 sudo vi /etc/hosts
 Add hostname to end of string
@@ -85,3 +87,4 @@ IPADDR=10.10.6.5
 NETMASK=255.255.254.0
 GATEWAY=10.10.6.22
 sudo reboot
+#####################################################################
