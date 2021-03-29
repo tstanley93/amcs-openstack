@@ -6,7 +6,7 @@ resource_registry:
   # Network configuration assignments for the Controller
   OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller.yaml
   # Network configuration assignments for the Compute
-  OS::TripleO::virtCompute::Net::SoftwareConfig: /home/stack/templates/virtcompute.yaml
+  OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute.yaml
   # Network configuration assignments for the BlockStorage
   # OS::TripleO::BlockStorage::Net::SoftwareConfig: /usr/share/openstack-tripleo-heat-templates/network/config/multiple-nics-vlans/cinder-storage.yaml
   # Network configuration assignments for the ObjectStorage
@@ -119,11 +119,11 @@ parameter_defaults:
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
   BondInterfaceOvsOptions: ""
-  ComputeExtraConfig:        
+  ComputeVirtExtraConfig:        
     nova::disk_allocation_ratio: 4.0
-  ComputeSchedulerHints:
+  ComputeVirtSchedulerHints:
     'capabilities:profile': 'compute-%index%'
   TimeZone: 'America/Los_Angeles'
   ControllerCount: 3
-  ComputeCount: 1
+  ComputeVirtCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
