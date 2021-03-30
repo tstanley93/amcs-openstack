@@ -16,16 +16,16 @@ resource_registry:
 
 
 parameter_defaults:
-  NeutronOVSFirewallDriver: noop
+  # NeutronOVSFirewallDriver: noop
   EnablePackageInstall: True
   NeutronPublicInterface: eth1
   ControlPlaneDefaultRoute: 10.10.6.22
-  EC2MetadataIp: 10.10.6.22
+  # EC2MetadataIp: 10.10.6.22
   HostnameMap:
-    thomas06-controller-0: controller0
-    thomas06-controller-1: controller1
-    thomas06-controller-2: controller2
-    thomas06-novacompute-0: compute0
+    thomas07-controller-0: controller0
+    thomas07-controller-1: controller1
+    thomas07-controller-2: controller2
+    thomas07-novacompute-0: compute0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
@@ -108,17 +108,17 @@ parameter_defaults:
   # List of Neutron network types for tenant networks (will be used in order)
   NeutronNetworkType: 'vlan'
   # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
-  NeutronTunnelTypes: 'vxlan'
+  # NeutronTunnelTypes: 'vxlan'
   NeutronBridgeMappings:
       - float:br-ex
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronNetworkVLANRanges: 
      - float:10:10
   NeutronFlatNetworks: "float"
-  NeutronExternalNetworkBridge: "''"
+  # NeutronExternalNetworkBridge: "''"
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
-  BondInterfaceOvsOptions: ""
+  # BondInterfaceOvsOptions: ""
   ComputeVirtExtraConfig:        
     nova::disk_allocation_ratio: 4.0
   ComputeVirtSchedulerHints:

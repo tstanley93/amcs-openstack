@@ -12,11 +12,11 @@ openstack subnet create tenantnet --network tenantnet --subnet-range 10.95.0.0/1
 
 ### Trunk Create
 openstack port create --network pdn_ex compute1-pdn_ex-parent-port
-openstack port create --network tenantnet compute1-tenantnet-sub-port
-openstack port create --network storagenet compute1-storagenet-sub-port
-openstack port create --network storagemgmtnet compute1-storagemgmtnet-sub-port
-openstack port create --network internalapinet compute1-internalapinet-sub-port
-openstack port create --network public compute1-public-sub-port
+openstack port create --network tenantnet --mac-address fa:16:3e:e1:46:00 compute1-tenantnet-sub-port
+openstack port create --network storagenet --mac-address fa:16:3e:e1:46:00 compute1-storagenet-sub-port
+openstack port create --network storagemgmtnet --mac-address fa:16:3e:e1:46:00 compute1-storagemgmtnet-sub-port
+openstack port create --network internalapinet --mac-address fa:16:3e:e1:46:00 compute1-internalapinet-sub-port
+openstack port create --network public --mac-address fa:16:3e:e1:46:00 compute1-public-sub-port
 openstack network trunk create --parent-port compute1-pdn_ex-parent-port compute1-trunk
 openstack network trunk set \
 --subport port=compute1-storagenet-sub-port,segmentation-type=vlan,segmentation-id=12 \
