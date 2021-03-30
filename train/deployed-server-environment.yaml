@@ -25,7 +25,7 @@ parameter_defaults:
     thomas10-controller-0: controller0
     thomas10-controller-1: controller1
     thomas10-controller-2: controller2
-    thomas10-novacompute-0: computevirt0
+    thomas10-computevirt-0: computevirt0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
