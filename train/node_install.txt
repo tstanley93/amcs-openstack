@@ -1,8 +1,8 @@
 ### Create External Networks
-openstack network create storagenet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 12
-openstack network create storagemgmtnet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 93
-openstack network create internalapinet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 94
-openstack network create tenantnet --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 95
+openstack network create storagenet --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 12
+openstack network create storagemgmtnet --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 93
+openstack network create internalapinet --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 94
+openstack network create tenantnet --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 95
 
 ### Create External Subnets
 openstack subnet create storagenet --network storagenet --subnet-range 10.12.0.0/24 --dhcp --allocation-pool start=10.12.0.70,end=10.12.0.99
@@ -11,30 +11,30 @@ openstack subnet create internalapinet --network internalapinet --subnet-range 1
 openstack subnet create tenantnet --network tenantnet --subnet-range 10.95.0.0/16 --dhcp --allocation-pool start=10.95.1.100,end=10.95.1.200
 
 ### Trunk Create
-openstack port create --network pdn_ex compute1-pdn_ex-parent-port
-openstack port create --network tenantnet --mac-address fa:16:3e:e1:46:00 compute1-tenantnet-sub-port
-openstack port create --network storagenet --mac-address fa:16:3e:e1:46:00 compute1-storagenet-sub-port
-openstack port create --network storagemgmtnet --mac-address fa:16:3e:e1:46:00 compute1-storagemgmtnet-sub-port
-openstack port create --network internalapinet --mac-address fa:16:3e:e1:46:00 compute1-internalapinet-sub-port
-openstack port create --network public --mac-address fa:16:3e:e1:46:00 compute1-public-sub-port
-openstack network trunk create --parent-port compute1-pdn_ex-parent-port compute1-trunk
+openstack port create --network pdn_ex controller3-pdn_ex-parent-port
+openstack port create --network tenantnet --mac-address fa:16:3e:dd:20:40 controller3-tenantnet-sub-port
+openstack port create --network storagenet --mac-address fa:16:3e:dd:20:40 controller3-storagenet-sub-port
+openstack port create --network storagemgmtnet --mac-address fa:16:3e:dd:20:40 controller3-storagemgmtnet-sub-port
+openstack port create --network internalapinet --mac-address fa:16:3e:dd:20:40 controller3-internalapinet-sub-port
+openstack port create --network public --mac-address fa:16:3e:dd:20:40 controller3-public-sub-port
+openstack network trunk create --parent-port controller3-pdn_ex-parent-port controller3-trunk
 openstack network trunk set \
---subport port=compute1-storagenet-sub-port,segmentation-type=vlan,segmentation-id=12 \
---subport port=compute1-storagemgmtnet-sub-port,segmentation-type=vlan,segmentation-id=93 \
---subport port=compute1-internalapinet-sub-port,segmentation-type=vlan,segmentation-id=94 \
---subport port=compute1-tenantnet-sub-port,segmentation-type=vlan,segmentation-id=95 \
---subport port=compute1-public-sub-port,segmentation-type=vlan,segmentation-id=10 \
-compute1-trunk
-openstack port create --network ha_ts compute1-ha_ts-port
+--subport port=controller3-storagenet-sub-port,segmentation-type=vlan,segmentation-id=12 \
+--subport port=controller3-storagemgmtnet-sub-port,segmentation-type=vlan,segmentation-id=93 \
+--subport port=controller3-internalapinet-sub-port,segmentation-type=vlan,segmentation-id=94 \
+--subport port=controller3-tenantnet-sub-port,segmentation-type=vlan,segmentation-id=95 \
+--subport port=controller3-public-sub-port,segmentation-type=vlan,segmentation-id=10 \
+controller3-trunk
+#openstack port create --network ha_ts controller3-ha_ts-port
 
 ### Server Create
 openstack server create \
 --key-name stanley01 \
 --image "openstack_16_image_3" \
 --flavor m1.large \
---nic port-id=307dbdb2-1991-45c5-baf9-11c3461ffe5e \
---nic port-id=eb52d94d-bcc7-402e-bda5-a951529e6153 \
-compute1
+--nic port-id=cf0bd96e-179d-4ed5-b5aa-2629d432b9ff \
+--nic port-id=5112b44e-9064-47b1-9f0b-6d759d7174ca \
+controller3
 
 #### Install Software
 sudo yum -y update
@@ -88,3 +88,6 @@ NETMASK=255.255.254.0
 GATEWAY=10.10.6.22
 sudo reboot
 #####################################################################
+
+
+tapeb52d94d-bc

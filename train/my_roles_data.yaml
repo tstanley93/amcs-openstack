@@ -197,7 +197,7 @@
 ###############################################################################
 - name: ComputeVirt
   description: |
-    Basic Compute Node role
+    Virtual Compute Node role
   CountDefault: 1
   # Create external Neutron bridge (unset if using ML2/OVS without DVR)
   tags:
@@ -209,7 +209,7 @@
       subnet: tenant_subnet
     Storage:
       subnet: storage_subnet
-  HostnameFormatDefault: '%stackname%-novacompute-%index%'
+  HostnameFormatDefault: '%stackname%-computevirt-%index%'
   RoleParametersDefault:
     TunedProfileName: "virtual-host"
   # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
