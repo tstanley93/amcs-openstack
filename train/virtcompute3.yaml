@@ -134,7 +134,7 @@ resources:
                 name: nic2
                 mtu:
                   get_param: StorageMtu
-                use_dhcp: false
+                use_dhcp: true
                 addresses:
                 - ip_netmask:
                     get_param: StorageIpSubnet
@@ -145,7 +145,7 @@ resources:
                 name: nic3
                 mtu:
                   get_param: InternalApiMtu
-                use_dhcp: false
+                use_dhcp: true
                 addresses:
                 - ip_netmask:
                     get_param: InternalApiIpSubnet
@@ -158,7 +158,7 @@ resources:
                   get_param: TenantMtu
                 dns_servers:
                   get_param: DnsServers
-                use_dhcp: false
+                use_dhcp: true
                 addresses:
                 - ip_netmask:
                     get_param: TenantIpSubnet
@@ -170,7 +170,7 @@ resources:
                   name: nic4
                   mtu:
                     get_param: TenantMtu
-                  use_dhcp: false
+                  use_dhcp: true
                   primary: true
 outputs:
   OS::stack_id:
