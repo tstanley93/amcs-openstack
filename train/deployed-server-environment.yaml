@@ -53,7 +53,7 @@ parameter_defaults:
           - 10.10.6.0/24
     computevirt0-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.4
+        - ip_address: 10.10.6.18
       subnets:
         - cidr: 10.10.6.0/24
       network:
