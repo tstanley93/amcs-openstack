@@ -27,14 +27,31 @@ openstack network trunk set \
 controller3-trunk
 #openstack port create --network ha_ts controller3-ha_ts-port
 
+
+
+
 ### Server Create
 openstack server create \
 --key-name stanley01 \
 --image "openstack_16_image_3" \
 --flavor m1.large \
---nic port-id=cf0bd96e-179d-4ed5-b5aa-2629d432b9ff \
---nic port-id=5112b44e-9064-47b1-9f0b-6d759d7174ca \
-controller3
+--network ha_ts \
+--network storagenet \
+--network storagemgmtnet \
+--network internalapinet \
+--network tenantnet \
+--network public \
+controller1
+
+openstack server create \
+--key-name stanley01 \
+--image "openstack_16_image_3" \
+--flavor m1.large \
+--network ha_ts \
+--network storagenet \
+--network internalapinet \
+--network tenantnet \
+computevirt1
 
 #### Install Software
 sudo yum -y update
