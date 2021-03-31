@@ -1,0 +1,118 @@
+# Environment file demonstrating how to pre-assign IPs to all node types
+resource_registry:
+  OS::TripleO::Controller::Ports::ExternalPort: ../network/ports/external_from_pool.yaml
+  OS::TripleO::Controller::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
+  OS::TripleO::Controller::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
+  OS::TripleO::Controller::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::Controller::Ports::TenantPort: ../network/ports/tenant_from_pool.yaml
+  # Management network is optional and disabled by default
+  #OS::TripleO::Controller::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+
+  OS::TripleO::Compute::Ports::ExternalPort: ../network/ports/noop.yaml
+  OS::TripleO::Compute::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
+  OS::TripleO::Compute::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
+  OS::TripleO::Compute::Ports::StorageMgmtPort: ../network/ports/noop.yaml
+  OS::TripleO::Compute::Ports::TenantPort: ../network/ports/tenant_from_pool.yaml
+  #OS::TripleO::Compute::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+
+  OS::TripleO::ComputeVirt::Ports::ExternalPort: ../network/ports/noop.yaml
+  OS::TripleO::ComputeVirt::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ComputeVirt::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
+  OS::TripleO::ComputeVirt::Ports::StorageMgmtPort: ../network/ports/noop.yaml
+  OS::TripleO::ComputeVirt::Ports::TenantPort: ../network/ports/tenant_from_pool.yaml
+  #OS::TripleO::ComputeVirt::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+
+  OS::TripleO::CephStorage::Ports::ExternalPort: ../network/ports/noop.yaml
+  OS::TripleO::CephStorage::Ports::InternalApiPort: ../network/ports/noop.yaml
+  OS::TripleO::CephStorage::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
+  OS::TripleO::CephStorage::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::CephStorage::Ports::TenantPort: ../network/ports/noop.yaml
+  #OS::TripleO::CephStorage::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+
+  OS::TripleO::ObjectStorage::Ports::ExternalPort: ../network/ports/noop.yaml
+  OS::TripleO::ObjectStorage::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ObjectStorage::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
+  OS::TripleO::ObjectStorage::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::ObjectStorage::Ports::TenantPort: ../network/ports/noop.yaml
+  #OS::TripleO::ObjectStorage::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+
+  OS::TripleO::BlockStorage::Ports::ExternalPort: ../network/ports/noop.yaml
+  OS::TripleO::BlockStorage::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
+  OS::TripleO::BlockStorage::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
+  OS::TripleO::BlockStorage::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::BlockStorage::Ports::TenantPort: ../network/ports/noop.yaml
+  #OS::TripleO::BlockStorage::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+
+parameter_defaults:
+  ControllerIPs:
+    # Each controller will get an IP from the lists below, first controller, first IP
+    external:
+    - 10.144.184.95
+    - 10.144.184.96
+    - 10.144.184.67
+    internal_api:
+    - 10.92.1.103
+    - 10.92.1.110
+    - 10.92.1.109
+    storage:
+    - 10.12.0.74
+    - 10.12.0.80
+    - 10.12.0.88
+    storage_mgmt:
+    - 10.94.1.102
+    - 10.94.1.104
+    - 10.94.1.131
+    tenant:
+    - 10.95.1.123
+    - 10.95.1.114
+    - 10.95.1.107
+    #management:
+    #- 172.16.4.251
+  ComputeIPs:
+    # Each compute will get an IP from the lists below, first compute, first IP
+    internal_api:
+    - 172.16.2.252
+    storage:
+    - 172.16.1.252
+    tenant:
+    - 172.16.0.252
+    #management:
+    #- 172.16.4.252
+  ComputeVirtIPs:
+    # Each compute will get an IP from the lists below, first computevirt, first IP
+    internal_api:
+    - 10.92.1.129
+    storage:
+    - 10.12.0.79
+    tenant:
+    - 10.95.1.110
+    #management:
+    #- 172.16.4.252
+  CephStorageIPs:
+    # Each ceph node will get an IP from the lists below, first node, first IP
+    storage:
+    - 172.16.1.253
+    storage_mgmt:
+    - 172.16.3.253
+    #management:
+    #- 172.16.4.253
+  SwiftStorageIPs:
+    # Each swift node will get an IP from the lists below, first node, first IP
+    internal_api:
+    - 172.16.2.254
+    storage:
+    - 172.16.1.254
+    storage_mgmt:
+    - 172.16.3.254
+    #management:
+    #- 172.16.4.254
+  BlockStorageIPs:
+    # Each cinder node will get an IP from the lists below, first node, first IP
+    internal_api:
+    - 172.16.2.250
+    storage:
+    - 172.16.1.250
+    storage_mgmt:
+    - 172.16.3.250
+    #management:
+    #- 172.16.4.250

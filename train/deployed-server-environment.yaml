@@ -22,14 +22,14 @@ parameter_defaults:
   ControlPlaneDefaultRoute: 10.10.6.22
   # EC2MetadataIp: 10.10.6.22
   HostnameMap:
-    thomas12-controller-0: controller0
-    thomas12-controller-1: controller1
-    thomas12-controller-2: controller2
-    thomas12-computevirt-0: computevirt0
+    thomas13-controller-0: controller0
+    thomas13-controller-1: controller1
+    thomas13-controller-2: controller2
+    thomas13-computevirt-0: computevirt0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.5
+        - ip_address: 10.10.6.3
       subnets:
         - cidr: 10.10.6.0/24
       network:
@@ -37,7 +37,7 @@ parameter_defaults:
           - 10.10.6.0/24
     controller1-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.13
+        - ip_address: 10.10.6.14
       subnets:
         - cidr: 10.10.6.0/24
       network:
@@ -45,7 +45,7 @@ parameter_defaults:
           - 10.10.6.0/24
     controller2-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.7
+        - ip_address: 10.10.6.5
       subnets:
         - cidr: 10.10.6.0/24
       network:
@@ -53,7 +53,7 @@ parameter_defaults:
           - 10.10.6.0/24
     computevirt0-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.6
+        - ip_address: 10.10.6.4
       subnets:
         - cidr: 10.10.6.0/24
       network:
