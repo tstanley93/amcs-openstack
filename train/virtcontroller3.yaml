@@ -223,6 +223,9 @@ resources:
                 addresses:
                 - ip_netmask:
                     get_param: ExternalIpSubnet
+                routes:
+                  list_concat_unique:
+                    - get_param: ExternalInterfaceRoutes
   OS::stack_id:
     description: The OsNetConfigImpl resource.
     value:
