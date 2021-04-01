@@ -22,7 +22,7 @@ parameter_defaults:
   ControlPlaneDefaultRoute: 10.10.6.22
   # EC2MetadataIp: 10.10.6.22
   HostnameMap:
-    thomas15:-controller-0: controller0
+    thomas15-controller-0: controller0
     thomas15-controller-1: controller1
     thomas15-controller-2: controller2
     thomas15-computevirt-0: computevirt0
