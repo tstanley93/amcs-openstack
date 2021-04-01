@@ -1,47 +1,47 @@
 # Environment file demonstrating how to pre-assign IPs to all node types
 resource_registry:
-  OS::TripleO::Controller::Ports::ExternalPort: ../network/ports/external_from_pool.yaml
-  OS::TripleO::Controller::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
-  OS::TripleO::Controller::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
-  OS::TripleO::Controller::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
-  OS::TripleO::Controller::Ports::TenantPort: ../network/ports/tenant_from_pool.yaml
+  OS::TripleO::Controller::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/external_from_pool.yaml
+  OS::TripleO::Controller::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/internal_api_from_pool.yaml
+  OS::TripleO::Controller::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
+  OS::TripleO::Controller::Ports::StorageMgmtPort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::Controller::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/tenant_from_pool.yaml
   # Management network is optional and disabled by default
-  #OS::TripleO::Controller::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+  #OS::TripleO::Controller::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
 
-  OS::TripleO::Compute::Ports::ExternalPort: ../network/ports/noop.yaml
-  OS::TripleO::Compute::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
-  OS::TripleO::Compute::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
-  OS::TripleO::Compute::Ports::StorageMgmtPort: ../network/ports/noop.yaml
-  OS::TripleO::Compute::Ports::TenantPort: ../network/ports/tenant_from_pool.yaml
-  #OS::TripleO::Compute::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+  OS::TripleO::Compute::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::Compute::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/internal_api_from_pool.yaml
+  OS::TripleO::Compute::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
+  OS::TripleO::Compute::Ports::StorageMgmtPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::Compute::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/tenant_from_pool.yaml
+  #OS::TripleO::Compute::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
 
-  OS::TripleO::ComputeVirt::Ports::ExternalPort: ../network/ports/noop.yaml
-  OS::TripleO::ComputeVirt::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
-  OS::TripleO::ComputeVirt::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
-  OS::TripleO::ComputeVirt::Ports::StorageMgmtPort: ../network/ports/noop.yaml
-  OS::TripleO::ComputeVirt::Ports::TenantPort: ../network/ports/tenant_from_pool.yaml
-  #OS::TripleO::ComputeVirt::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+  OS::TripleO::ComputeVirt::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ComputeVirt::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ComputeVirt::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
+  OS::TripleO::ComputeVirt::Ports::StorageMgmtPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ComputeVirt::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/tenant_from_pool.yaml
+  #OS::TripleO::ComputeVirt::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
 
-  OS::TripleO::CephStorage::Ports::ExternalPort: ../network/ports/noop.yaml
-  OS::TripleO::CephStorage::Ports::InternalApiPort: ../network/ports/noop.yaml
-  OS::TripleO::CephStorage::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
-  OS::TripleO::CephStorage::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
-  OS::TripleO::CephStorage::Ports::TenantPort: ../network/ports/noop.yaml
-  #OS::TripleO::CephStorage::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+  OS::TripleO::CephStorage::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::CephStorage::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::CephStorage::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
+  OS::TripleO::CephStorage::Ports::StorageMgmtPort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::CephStorage::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  #OS::TripleO::CephStorage::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
 
-  OS::TripleO::ObjectStorage::Ports::ExternalPort: ../network/ports/noop.yaml
-  OS::TripleO::ObjectStorage::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
-  OS::TripleO::ObjectStorage::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
-  OS::TripleO::ObjectStorage::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
-  OS::TripleO::ObjectStorage::Ports::TenantPort: ../network/ports/noop.yaml
-  #OS::TripleO::ObjectStorage::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+  OS::TripleO::ObjectStorage::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ObjectStorage::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ObjectStorage::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
+  OS::TripleO::ObjectStorage::Ports::StorageMgmtPort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::ObjectStorage::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  #OS::TripleO::ObjectStorage::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
 
-  OS::TripleO::BlockStorage::Ports::ExternalPort: ../network/ports/noop.yaml
-  OS::TripleO::BlockStorage::Ports::InternalApiPort: ../network/ports/internal_api_from_pool.yaml
-  OS::TripleO::BlockStorage::Ports::StoragePort: ../network/ports/storage_from_pool.yaml
-  OS::TripleO::BlockStorage::Ports::StorageMgmtPort: ../network/ports/storage_mgmt_from_pool.yaml
-  OS::TripleO::BlockStorage::Ports::TenantPort: ../network/ports/noop.yaml
-  #OS::TripleO::BlockStorage::Ports::ManagementPort: ../network/ports/management_from_pool.yaml
+  OS::TripleO::BlockStorage::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::BlockStorage::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/internal_api_from_pool.yaml
+  OS::TripleO::BlockStorage::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
+  OS::TripleO::BlockStorage::Ports::StorageMgmtPort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_mgmt_from_pool.yaml
+  OS::TripleO::BlockStorage::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  #OS::TripleO::BlockStorage::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
 
 parameter_defaults:
   ControllerIPs:
