@@ -226,6 +226,7 @@ resources:
                 routes:
                   list_concat_unique:
                     - get_param: ExternalInterfaceRoutes
+outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
     value:
