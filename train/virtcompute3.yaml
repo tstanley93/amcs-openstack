@@ -152,12 +152,10 @@ resources:
                 routes:
                   list_concat_unique:
                     - get_param: InternalApiInterfaceRoutes
-              - type: ovs_bridge
-                name: br-tenant
+              - type: interface
+                name: nic4
                 mtu:
                   get_param: TenantMtu
-                dns_servers:
-                  get_param: DnsServers
                 use_dhcp: false
                 addresses:
                 - ip_netmask:
@@ -165,13 +163,6 @@ resources:
                 routes:
                   list_concat_unique:
                     - get_param: TenantInterfaceRoutes
-                members:
-                - type: interface
-                  name: nic4
-                  mtu:
-                    get_param: TenantMtu
-                  use_dhcp: false
-                  primary: false
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
