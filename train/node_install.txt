@@ -27,6 +27,10 @@ openstack network trunk set \
 computevirt1-trunk
 #openstack port create --network ha_ts computevirt1-ha_ts-port
 
+openstack port create --network storagenet storagevipport
+openstack port create --network storagemgmtnet storagemgmtvipport
+openstack port create --network internalapinet internalapivipport
+openstack port create --network public publicvipport
 
 
 
@@ -107,6 +111,3 @@ echo "GATEWAY=10.10.6.22" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth
 
 sudo reboot
 #####################################################################
-
-
-tapeb52d94d-bc

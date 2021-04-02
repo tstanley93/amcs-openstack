@@ -93,7 +93,13 @@ parameter_defaults:
   ExternalAllocationPools: [{'start': '10.144.184.35', 'end': '10.144.184.65'}]
   # Gateway routers for routable networks
   ExternalInterfaceDefaultRoute: '10.144.187.254'
-
+  # Custom VIP addresses
+  # ControlFixedIPs: [{'ip_address':'192.168.201.101'}]
+  InternalApiVirtualFixedIPs: [{'ip_address':'10.92.1.120'}]
+  PublicVirtualFixedIPs: [{'ip_address':'10.144.184.86'}]
+  StorageVirtualFixedIPs: [{'ip_address':'10.12.0.78'}]
+  StorageMgmtVirtualFixedIPs: [{'ip_address':'10.94.1.111'}]
+  # RedisVirtualFixedIPs: [{'ip_address':'172.16.0.8'}]
 
   # Customize the IP subnet to match the local environment
   ManagementNetCidr: '10.10.6.0/24'
