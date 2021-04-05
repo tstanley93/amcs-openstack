@@ -93,7 +93,7 @@ parameter_defaults:
   ExternalAllocationPools: [{'start': '10.144.184.35', 'end': '10.144.184.65'}]
   # Gateway routers for routable networks
   ExternalInterfaceDefaultRoute: '10.144.187.254'
-  # Custom VIP addresses
+  ### Custom VIP addresses
   # ControlFixedIPs: [{'ip_address':'192.168.201.101'}]
   InternalApiVirtualFixedIPs: [{'ip_address':'10.92.1.120'}]
   PublicVirtualFixedIPs: [{'ip_address':'10.144.184.86'}]
