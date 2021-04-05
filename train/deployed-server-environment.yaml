@@ -22,10 +22,10 @@ parameter_defaults:
   ControlPlaneDefaultRoute: 10.10.6.22
   # EC2MetadataIp: 10.10.6.22
   HostnameMap:
-    thomas19-controller-0: controller0
-    thomas19-controller-1: controller1
-    thomas19-controller-2: controller2
-    thomas19-computevirt-0: computevirt0
+  thomas20-controller-0: controller0
+  thomas20-controller-1: controller1
+  thomas20-controller-2: controller2
+  thomas20-computevirt-0: computevirt0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
