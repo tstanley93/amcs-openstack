@@ -35,6 +35,15 @@ openstack port create --network public publicvipport
 
 
 ### Server Create
+
+openstack server create \
+--key-name stanley01 \
+--image "CentOS-8-x86_64-GenericCloud" \
+--flavor m1.xlarge \
+--network mgmt_ts \
+--network ha_ts \
+osdir
+
 openstack server create \
 --key-name stanley01 \
 --image "openstack_16_image_3" \
