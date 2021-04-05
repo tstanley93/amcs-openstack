@@ -4,7 +4,7 @@ environments:
   - /usr/share/openstack-tripleo-heat-templates/environments/network-environment.yaml
   - /home/stack/templates/deployed-server-environment.yaml
   - /home/stack/templates/ips-from-pool-all.yaml
-  # - /home/stack/templates/containers-prepare-parameter.yaml
+  - /home/stack/templates/containers-prepare-parameter.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/docker-ha.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/host-config-and-reboot.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/neutron-sriov.yaml
