@@ -270,7 +270,6 @@ openstack overcloud deploy \
 --stack ${depName} \
 --ntp-server "time.google.com" \
 --disable-validations \
---deployed-server \
 --overcloud-ssh-user stack \
 --overcloud-ssh-key /home/stack/.ssh/id_rsa \
 2>&1 | tee ${depName}_install.log
