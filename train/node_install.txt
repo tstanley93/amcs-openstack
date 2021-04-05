@@ -46,7 +46,7 @@ osdir
 
 openstack server create \
 --key-name stanley01 \
---image "openstack_16_image_3" \
+--image "openstack_16_image_4" \
 --flavor m1.large \
 --network ha_ts \
 --network storagenet \
@@ -58,7 +58,7 @@ controller1
 
 openstack server create \
 --key-name stanley01 \
---image "openstack_16_image_3" \
+--image "openstack_16_image_4" \
 --flavor m1.large \
 --network ha_ts \
 --network storagenet \
@@ -71,6 +71,10 @@ sudo yum -y update
 sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210118183911.2cfaa48.el8.noarch.rpm
 sudo -E tripleo-repos -b train current
 sudo yum install -y python3-heat-agent*
+
+openstack tripleo container image prepare default \
+  --local-push-destination \
+  --output-env-file ~/templates/containers-prepare-parameter2.yaml
 
 #####  Add Stack User
 sudo su -
@@ -114,7 +118,7 @@ sudo sed -e 's/no/yes/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
 sudo sed -e 's/dhcp/none/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "DNS1=172.27.1.1" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "DNS2=172.27.2.1" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
-echo "IPADDR=10.10.6.6" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
+echo "IPADDR=10.10.6.14" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "NETMASK=255.255.254.0" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "GATEWAY=10.10.6.22" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 
