@@ -11,21 +11,21 @@ openstack subnet create internalapinet --network internalapinet --subnet-range 1
 openstack subnet create tenantnet --network tenantnet --subnet-range 10.95.0.0/16 --dhcp --allocation-pool start=10.95.1.100,end=10.95.1.200
 
 ### Trunk Create
-openstack port create --network pdn_ex computevirt1-pdn_ex-parent-port
-openstack port create --network tenantnet --mac-address fa:16:3e:dd:20:40 computevirt1-tenantnet-sub-port
-openstack port create --network storagenet --mac-address fa:16:3e:dd:20:40 computevirt1-storagenet-sub-port
-openstack port create --network storagemgmtnet --mac-address fa:16:3e:dd:20:40 computevirt1-storagemgmtnet-sub-port
-openstack port create --network internalapinet --mac-address fa:16:3e:dd:20:40 computevirt1-internalapinet-sub-port
-openstack port create --network public --mac-address fa:16:3e:dd:20:40 computevirt1-public-sub-port
-openstack network trunk create --parent-port computevirt1-pdn_ex-parent-port computevirt1-trunk
+openstack port create --network pdn_ex virtcompute1-pdn_ex-parent-port
+openstack port create --network tenantnet --mac-address fa:16:3e:dd:20:40 virtcompute1-tenantnet-sub-port
+openstack port create --network storagenet --mac-address fa:16:3e:dd:20:40 virtcompute1-storagenet-sub-port
+openstack port create --network storagemgmtnet --mac-address fa:16:3e:dd:20:40 virtcompute1-storagemgmtnet-sub-port
+openstack port create --network internalapinet --mac-address fa:16:3e:dd:20:40 virtcompute1-internalapinet-sub-port
+openstack port create --network public --mac-address fa:16:3e:dd:20:40 virtcompute1-public-sub-port
+openstack network trunk create --parent-port virtcompute1-pdn_ex-parent-port virtcompute1-trunk
 openstack network trunk set \
---subport port=computevirt1-storagenet-sub-port,segmentation-type=vlan,segmentation-id=12 \
---subport port=computevirt1-storagemgmtnet-sub-port,segmentation-type=vlan,segmentation-id=93 \
---subport port=computevirt1-internalapinet-sub-port,segmentation-type=vlan,segmentation-id=94 \
---subport port=computevirt1-tenantnet-sub-port,segmentation-type=vlan,segmentation-id=95 \
---subport port=computevirt1-public-sub-port,segmentation-type=vlan,segmentation-id=10 \
-computevirt1-trunk
-#openstack port create --network ha_ts computevirt1-ha_ts-port
+--subport port=virtcompute1-storagenet-sub-port,segmentation-type=vlan,segmentation-id=12 \
+--subport port=virtcompute1-storagemgmtnet-sub-port,segmentation-type=vlan,segmentation-id=93 \
+--subport port=virtcompute1-internalapinet-sub-port,segmentation-type=vlan,segmentation-id=94 \
+--subport port=virtcompute1-tenantnet-sub-port,segmentation-type=vlan,segmentation-id=95 \
+--subport port=virtcompute1-public-sub-port,segmentation-type=vlan,segmentation-id=10 \
+virtcompute1-trunk
+#openstack port create --network ha_ts virtcompute1-ha_ts-port
 
 openstack port create --network storagenet storagevipport
 openstack port create --network storagemgmtnet storagemgmtvipport
@@ -54,7 +54,7 @@ openstack server create \
 --network internalapinet \
 --network tenantnet \
 --network public \
-controller1
+virtcompute1
 
 openstack server create \
 --key-name stanley01 \
@@ -64,7 +64,7 @@ openstack server create \
 --network storagenet \
 --network internalapinet \
 --network tenantnet \
-computevirt1
+virtcompute1
 
 #### Install Software
 sudo yum -y update
@@ -110,17 +110,16 @@ exit
 #####################################################################
 echo "" > .ssh/known_hosts
 
-echo "computevirt1" | sudo tee /etc/hostname
-sudo sed -e 's/domain4/domain4 computevirt1/' -i /etc/hosts
-sudo sed -e 's/domain6/domain6 computevirt1/' -i /etc/hosts
+echo "virtcompute1" | sudo tee /etc/hostname
+sudo sed -e 's/domain4/domain4 virtcompute1/' -i /etc/hosts
+sudo sed -e 's/domain6/domain6 virtcompute1/' -i /etc/hosts
 echo "network: {config: disabled}" | sudo tee -a /etc/cloud/cloud.cfg.d/99-custom-networking.cfg
 sudo sed -e 's/no/yes/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
 sudo sed -e 's/dhcp/none/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "DNS1=172.27.1.1" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "DNS2=172.27.2.1" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
-echo "IPADDR=10.10.6.14" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
+echo "IPADDR=10.10.6.10" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "NETMASK=255.255.254.0" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "GATEWAY=10.10.6.22" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
-
 sudo reboot
 #####################################################################

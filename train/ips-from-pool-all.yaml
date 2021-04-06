@@ -47,34 +47,34 @@ parameter_defaults:
   ControllerIPs:
     # Each controller will get an IP from the lists below, first controller, first IP
     external:
-    - 10.144.184.96
     - 10.144.184.67
+    - 10.144.184.87
     - 10.144.184.95
     internal_api:
+    - 10.92.1.102
     - 10.92.1.105
-    - 10.92.1.110
     - 10.92.1.111
     storage:
-    - 10.12.0.73
-    - 10.12.0.71
-    - 10.12.0.74
+    - 10.12.0.67
+    - 10.12.0.87
+    - 10.12.0.95
     storage_mgmt:
-    - 10.94.1.104
-    - 10.94.1.108
-    - 10.94.1.122
+    - 10.94.1.74
+    - 10.94.1.84
+    - 10.94.1.82
     tenant:
-    - 10.95.1.112
-    - 10.95.1.105
-    - 10.95.1.107
+    - 10.95.1.109
+    - 10.95.1.101
+    - 10.95.1.126
     #management:
     #- 172.16.4.251
   ComputeVirtIPs:
     # Each compute will get an IP from the lists below, first computevirt, first IP
     internal_api:
-    - 10.92.1.103
+    - 10.92.1.106
     storage:
-    - 10.12.0.94
+    - 10.12.0.79
     tenant:
-    - 10.95.1.119
+    - 10.95.1.116
     #management:
     #- 172.16.4.252
