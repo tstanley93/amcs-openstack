@@ -104,7 +104,7 @@ parameter_defaults:
   # Customize the IP subnet to match the local environment
   ManagementNetCidr: '10.10.6.0/24'
   # Customize the IP range to use for static IPs and VIPs
-  ManagementAllocationPools: [{'start': '10.10.7.40', 'end': '10.10.7.50'}]
+  ManagementAllocationPools: [{'start': '10.10.6.240', 'end': '10.10.6.250'}]
   # Gateway router for routable networks
   ManagementInterfaceDefaultRoute: '10.10.6.25'
   # Customize the VLAN ID to match the local environment
