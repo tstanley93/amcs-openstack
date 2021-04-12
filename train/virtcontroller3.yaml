@@ -179,9 +179,6 @@ resources:
                 addresses:
                 - ip_netmask:
                     get_param: StorageIpSubnet
-                routes:
-                  list_concat_unique:
-                    - get_param: StorageInterfaceRoutes
               - type: interface
                 name: nic3
                 mtu:
@@ -190,9 +187,6 @@ resources:
                 addresses:
                 - ip_netmask:
                     get_param: StorageMgmtIpSubnet
-                routes:
-                  list_concat_unique:
-                    - get_param: StorageMgmtInterfaceRoutes
               - type: interface
                 name: nic4
                 mtu:
@@ -201,9 +195,6 @@ resources:
                 addresses:
                 - ip_netmask:
                     get_param: InternalApiIpSubnet
-                routes:
-                  list_concat_unique:
-                    - get_param: InternalApiInterfaceRoutes
               - type: interface
                 name: nic5
                 mtu:
@@ -212,9 +203,6 @@ resources:
                 addresses:
                 - ip_netmask:
                     get_param: TenantIpSubnet
-                routes:
-                  list_concat_unique:
-                    - get_param: TenantInterfaceRoutes
               - type: interface
                 name: nic6
                 mtu:
@@ -223,9 +211,6 @@ resources:
                 addresses:
                 - ip_netmask:
                     get_param: ExternalIpSubnet
-                routes:
-                  list_concat_unique:
-                    - get_param: ExternalInterfaceRoutes
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
