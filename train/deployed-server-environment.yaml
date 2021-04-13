@@ -4,7 +4,7 @@ resource_registry:
   OS::TripleO::DeployedServer::Bootstrap: OS::Heat::None
 
   # Network configuration assignments for the Controller
-  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller2.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller4.yaml
   # Network configuration assignments for the Compute
   OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute4.yaml
   # Network configuration assignments for the BlockStorage
