@@ -209,6 +209,8 @@
       subnet: tenant_subnet
     Storage:
       subnet: storage_subnet
+    External:
+      subnet: external_subnet
   HostnameFormatDefault: '%stackname%-computevirt-%index%'
   RoleParametersDefault:
     TunedProfileName: "virtual-host"
