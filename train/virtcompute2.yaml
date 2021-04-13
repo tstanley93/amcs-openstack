@@ -189,6 +189,28 @@ resources:
                   routes:
                     list_concat_unique:
                       - get_param: TenantInterfaceRoutes
+              - type: ovs_bridge
+                name: bridge_name
+                mtu:
+                  get_param: ExternalMtu
+                dns_servers:
+                  get_param: DnsServers
+                use_dhcp: false
+                members:
+                - type: interface
+                  name: nic5
+                  mtu:
+                    get_param: ExternalMtu
+                  use_dhcp: false
+                  primary: true
+                - type: vlan
+                  mtu:
+                    get_param: ExternalMtu
+                  vlan_id:
+                    get_param: ExternalNetworkVlanID
+                  addresses:
+                  - ip_netmask:
+                      get_param: ExternalIpSubnet
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
