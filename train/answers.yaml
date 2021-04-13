@@ -1,7 +1,7 @@
 templates: /usr/share/openstack-tripleo-heat-templates/
 environments:
-  - /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml
-  - /home/stack/templates/network-environment.yaml
+  - /home/stack/templates/network-isolation.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/network-environment.yaml
   - /home/stack/templates/deployed-server-environment.yaml
   - /home/stack/templates/ips-from-pool-all.yaml
   - /home/stack/templates/containers-prepare-parameter.yaml
