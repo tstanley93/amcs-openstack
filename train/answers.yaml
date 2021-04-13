@@ -6,7 +6,7 @@ environments:
   - /home/stack/templates/ips-from-pool-all.yaml
   - /home/stack/templates/containers-prepare-parameter.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/podman.yaml
-  - /usr/share/openstack-tripleo-heat-templates/environments/services/neutron-ovn-dvr-ha
+  - /usr/share/openstack-tripleo-heat-templates/environments/services/neutron-ovn-dvr-ha.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/host-config-and-reboot.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/neutron-sriov.yaml
   # - /home/stack/templates/05-network-environment.yaml
