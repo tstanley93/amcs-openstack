@@ -64,6 +64,7 @@ openstack server create \
 --network storagenet \
 --network internalapinet \
 --network tenantnet \
+--network public \
 virtcompute1
 
 #### Install Software

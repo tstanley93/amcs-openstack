@@ -71,10 +71,12 @@ parameter_defaults:
   ComputeVirtIPs:
     # Each compute will get an IP from the lists below, first computevirt, first IP
     internal_api:
-    - 10.92.1.106
+    - 10.92.1.128
     storage:
-    - 10.12.0.79
+    - 10.12.0.87
     tenant:
-    - 10.95.1.116
+    - 10.95.1.125
+    external:
+    - 10.144.184.98
     #management:
     #- 172.16.4.252

@@ -22,10 +22,10 @@ parameter_defaults:
   ControlPlaneDefaultRoute: 10.10.6.25
   # EC2MetadataIp: 10.10.6.25
   HostnameMap:
-    thomas24-controller-0: controller0
-    thomas24-controller-1: controller1
-    thomas24-controller-2: controller2
-    thomas24-computevirt-0: computevirt0
+    thomas25-controller-0: controller0
+    thomas25-controller-1: controller1
+    thomas25-controller-2: controller2
+    thomas25-computevirt-0: computevirt0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
@@ -53,7 +53,7 @@ parameter_defaults:
           - 10.10.6.0/24
     computevirt0-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.10
+        - ip_address: 10.10.6.7
       subnets:
         - cidr: 10.10.6.0/24
       network:
@@ -112,7 +112,7 @@ parameter_defaults:
   # Define the DNS servers (maximum 2) for the overcloud nodes
   DnsServers: ["172.27.1.1","172.27.2.1"]
   # List of Neutron network types for tenant networks (will be used in order)
-  NeutronNetworkType: 'vlan'
+  # NeutronNetworkType: 'vlan'
   # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
   # NeutronTunnelTypes: 'vxlan'
   NeutronBridgeMappings:
