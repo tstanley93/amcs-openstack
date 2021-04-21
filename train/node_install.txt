@@ -10,23 +10,44 @@ openstack subnet create storagemgmtnet --network storagemgmtnet --subnet-range 1
 openstack subnet create internalapinet --network internalapinet --subnet-range 10.92.0.0/16 --dhcp --allocation-pool start=10.92.1.100,end=10.92.1.200
 openstack subnet create tenantnet --network tenantnet --subnet-range 10.95.0.0/16 --dhcp --allocation-pool start=10.95.1.100,end=10.95.1.200
 
-### Trunk Create
-openstack port create --network pdn_ex virtcompute1-pdn_ex-parent-port
-openstack port create --network tenantnet --mac-address fa:16:3e:dd:20:40 virtcompute1-tenantnet-sub-port
-openstack port create --network storagenet --mac-address fa:16:3e:dd:20:40 virtcompute1-storagenet-sub-port
-openstack port create --network storagemgmtnet --mac-address fa:16:3e:dd:20:40 virtcompute1-storagemgmtnet-sub-port
-openstack port create --network internalapinet --mac-address fa:16:3e:dd:20:40 virtcompute1-internalapinet-sub-port
-openstack port create --network public --mac-address fa:16:3e:dd:20:40 virtcompute1-public-sub-port
-openstack network trunk create --parent-port virtcompute1-pdn_ex-parent-port virtcompute1-trunk
-openstack network trunk set \
---subport port=virtcompute1-storagenet-sub-port,segmentation-type=vlan,segmentation-id=12 \
---subport port=virtcompute1-storagemgmtnet-sub-port,segmentation-type=vlan,segmentation-id=93 \
---subport port=virtcompute1-internalapinet-sub-port,segmentation-type=vlan,segmentation-id=94 \
---subport port=virtcompute1-tenantnet-sub-port,segmentation-type=vlan,segmentation-id=95 \
---subport port=virtcompute1-public-sub-port,segmentation-type=vlan,segmentation-id=10 \
-virtcompute1-trunk
-#openstack port create --network ha_ts virtcompute1-ha_ts-port
+### osdir Port Create
+openstack port create --network mgmt_ts osdir-mgmt
+openstack port create --network pgw_ex osdir-pgw_ex
+openstack port create --network pgw_ex osdir-admin
+openstack port create --network pgw_ex osdir-vip
 
+### virtcompute1 Port Create
+openstack port create --network pgw_ex virtcompute1-pgw_ex
+openstack port create --network storagenet virtcompute1-storagenet
+openstack port create --network internalapinet virtcompute1-internalapinet
+openstack port create --network tenantnet virtcompute1-tenantnet
+openstack port create --network public virtcompute1-public
+
+### controller1 Port Create
+openstack port create --network pgw_ex controller1-pgw_ex
+openstack port create --network storagenet controller1-storagenet
+openstack port create --network storagemgmtnet controller1-storagemgmtnet
+openstack port create --network internalapinet controller1-internalapinet
+openstack port create --network tenantnet controller1-tenantnet
+openstack port create --network public controller1-public
+
+### controller2 Port Create
+openstack port create --network pgw_ex controller2-pgw_ex
+openstack port create --network storagenet controller2-storagenet
+openstack port create --network storagemgmtnet controller2-storagemgmtnet
+openstack port create --network internalapinet controller2-internalapinet
+openstack port create --network tenantnet controller2-tenantnet
+openstack port create --network public controller2-public
+
+### controller3 Port Create
+openstack port create --network pgw_ex controller3-pgw_ex
+openstack port create --network storagenet controller3-storagenet
+openstack port create --network storagemgmtnet controller3-storagemgmtnet
+openstack port create --network internalapinet controller3-internalapinet
+openstack port create --network tenantnet controller3-tenantnet
+openstack port create --network public controller3-public
+
+### VIP Port Create
 openstack port create --network storagenet storagevipport
 openstack port create --network storagemgmtnet storagemgmtvipport
 openstack port create --network internalapinet internalapivipport
@@ -34,37 +55,61 @@ openstack port create --network public publicvipport
 
 
 
-### Server Create
+### Create Servers
 
 openstack server create \
 --key-name stanley01 \
 --image "CentOS-8-x86_64-GenericCloud" \
 --flavor m1.xlarge \
---network mgmt_ts \
---network ha_ts \
+--nic port-id=d88a42be-613f-4612-8391-5d736f4bd81c \
+--nic port-id=64f63299-dcc7-4f91-81e3-3a44e215713f \
 osdir
 
 openstack server create \
 --key-name stanley01 \
 --image "openstack_16_image_4" \
 --flavor m1.large \
---network ha_ts \
---network storagenet \
---network storagemgmtnet \
---network internalapinet \
---network tenantnet \
---network public \
-virtcompute1
+--nic port-id=4addab8f-7521-4a98-b160-bf3a9c19547a \
+--nic port-id=aa99a0ae-f958-4485-a785-21d1ce56981f \
+--nic port-id=af826860-b9d2-4fd4-9c0f-c2cbf42336c2 \
+--nic port-id=bb5ecf4c-768f-42af-b1af-0c569330e23f \
+--nic port-id=320e6d38-aced-4eca-b764-65755021dc5b \
+--nic port-id=6833347b-5b82-4c6e-a62f-939b89ab6626 \
+controller1
 
 openstack server create \
 --key-name stanley01 \
 --image "openstack_16_image_4" \
 --flavor m1.large \
---network ha_ts \
---network storagenet \
---network internalapinet \
---network tenantnet \
---network public \
+--nic port-id=ce9b28c0-62ed-492f-8a00-383e77146ab8 \
+--nic port-id=eedfe918-f56b-4157-988c-8cac17197d07 \
+--nic port-id=a16bf007-6f3f-431c-9f5a-e1cbc673ffa9 \
+--nic port-id=5254257c-a1d5-4eaf-af1c-6c5d60c55623 \
+--nic port-id=9af2f183-8335-4db3-9fc1-d1c96cdc235f \
+--nic port-id=847c2aca-004c-495b-83e7-0c286d3e9a9d \
+controller2
+
+openstack server create \
+--key-name stanley01 \
+--image "openstack_16_image_4" \
+--flavor m1.large \
+--nic port-id=92bafb7c-1bb0-4a27-b5c2-e78365b3972a \
+--nic port-id=f75c0af7-caad-4586-a6b5-0b18c5056fe1 \
+--nic port-id=185d3236-4a08-4b51-bb3c-1d63a7917f52 \
+--nic port-id=3ec0d822-4ab6-478e-957d-4ecad3650de9 \
+--nic port-id=45b1fe0c-49bd-4fd1-a45c-cbd2e75fce91 \
+--nic port-id=be606b62-daf7-4b93-b02c-93d90f2676f9 \
+controller3
+
+openstack server create \
+--key-name stanley01 \
+--image "openstack_16_image_4" \
+--flavor m1.large \
+--nic port-id=f7c7ad00-2a3f-49c1-923a-4334ac0f380f \
+--nic port-id=dbc8984a-2652-4be5-b282-94d887a4810e \
+--nic port-id=f51afcc4-ee4e-4678-b4be-659df0d45b20 \
+--nic port-id=94d1e07b-3d0b-4c40-b6b3-2f7c23caa791 \
+--nic port-id=3926c9fa-7770-4ab1-8f3a-12279b779c62 \
 virtcompute1
 
 #### Install Software
