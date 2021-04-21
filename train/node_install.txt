@@ -15,13 +15,18 @@ openstack port create --network mgmt_ts osdir-mgmt
 openstack port create --network pgw_ex osdir-pgw_ex
 openstack port create --network pgw_ex osdir-admin
 openstack port create --network pgw_ex osdir-vip
+openstack port set --allowed-address ip-address=0.0.0.0/0 osdir-pgw_ex
 
 ### virtcompute1 Port Create
 openstack port create --network pgw_ex virtcompute1-pgw_ex
 openstack port create --network storagenet virtcompute1-storagenet
-openstack port create --network internalapinet virtcompute1-internalapinet
+openstack port create --network internalapinet virtcompute1-storagenet
 openstack port create --network tenantnet virtcompute1-tenantnet
 openstack port create --network public virtcompute1-public
+openstack port set --allowed-address ip-address=0.0.0.0/0 virtcompute1-storagenet
+openstack port set --allowed-address ip-address=0.0.0.0/0 virtcompute1-storagenet
+openstack port set --allowed-address ip-address=0.0.0.0/0 virtcompute1-tenantnet
+openstack port set --allowed-address ip-address=0.0.0.0/0 virtcompute1-public
 
 ### controller1 Port Create
 openstack port create --network pgw_ex controller1-pgw_ex
@@ -30,6 +35,11 @@ openstack port create --network storagemgmtnet controller1-storagemgmtnet
 openstack port create --network internalapinet controller1-internalapinet
 openstack port create --network tenantnet controller1-tenantnet
 openstack port create --network public controller1-public
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller1-storagenet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller1-storagemgmtnet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller1-internalapinet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller1-tenantnet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller1-public
 
 ### controller2 Port Create
 openstack port create --network pgw_ex controller2-pgw_ex
@@ -38,6 +48,11 @@ openstack port create --network storagemgmtnet controller2-storagemgmtnet
 openstack port create --network internalapinet controller2-internalapinet
 openstack port create --network tenantnet controller2-tenantnet
 openstack port create --network public controller2-public
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller2-storagenet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller2-storagemgmtnet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller2-internalapinet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller2-tenantnet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller2-public
 
 ### controller3 Port Create
 openstack port create --network pgw_ex controller3-pgw_ex
@@ -46,6 +61,11 @@ openstack port create --network storagemgmtnet controller3-storagemgmtnet
 openstack port create --network internalapinet controller3-internalapinet
 openstack port create --network tenantnet controller3-tenantnet
 openstack port create --network public controller3-public
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller3-storagenet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller3-storagemgmtnet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller3-internalapinet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller3-tenantnet
+openstack port set --allowed-address ip-address=0.0.0.0/0 controller3-public
 
 ### VIP Port Create
 openstack port create --network storagenet storagevipport
@@ -59,7 +79,7 @@ openstack port create --network public publicvipport
 
 openstack server create \
 --key-name stanley01 \
---image "CentOS-8-x86_64-GenericCloud" \
+--image "CentOS-Stream-ec2-8-20210210.0.x86_64" \
 --flavor m1.xlarge \
 --nic port-id=d88a42be-613f-4612-8391-5d736f4bd81c \
 --nic port-id=64f63299-dcc7-4f91-81e3-3a44e215713f \
@@ -67,7 +87,7 @@ osdir
 
 openstack server create \
 --key-name stanley01 \
---image "openstack_16_image_4" \
+--image "openstack_16_image_5" \
 --flavor m1.large \
 --nic port-id=4addab8f-7521-4a98-b160-bf3a9c19547a \
 --nic port-id=aa99a0ae-f958-4485-a785-21d1ce56981f \
@@ -79,7 +99,7 @@ controller1
 
 openstack server create \
 --key-name stanley01 \
---image "openstack_16_image_4" \
+--image "openstack_16_image_5" \
 --flavor m1.large \
 --nic port-id=ce9b28c0-62ed-492f-8a00-383e77146ab8 \
 --nic port-id=eedfe918-f56b-4157-988c-8cac17197d07 \
@@ -91,7 +111,7 @@ controller2
 
 openstack server create \
 --key-name stanley01 \
---image "openstack_16_image_4" \
+--image "openstack_16_image_5" \
 --flavor m1.large \
 --nic port-id=92bafb7c-1bb0-4a27-b5c2-e78365b3972a \
 --nic port-id=f75c0af7-caad-4586-a6b5-0b18c5056fe1 \
@@ -103,7 +123,7 @@ controller3
 
 openstack server create \
 --key-name stanley01 \
---image "openstack_16_image_4" \
+--image "openstack_16_image_5" \
 --flavor m1.large \
 --nic port-id=f7c7ad00-2a3f-49c1-923a-4334ac0f380f \
 --nic port-id=dbc8984a-2652-4be5-b282-94d887a4810e \
@@ -114,8 +134,10 @@ virtcompute1
 
 #### Install Software
 sudo yum -y update
-sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210118183911.2cfaa48.el8.noarch.rpm
+sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210421150506.c241a1a.el8.noarch.rpm
 sudo -E tripleo-repos -b train current
+sudo yum install -y python3-tripleoclient
+or...
 sudo yum install -y python3-heat-agent*
 
 openstack tripleo container image prepare default \
@@ -156,9 +178,9 @@ exit
 #####################################################################
 echo "" > .ssh/known_hosts
 
-echo "virtcompute1" | sudo tee /etc/hostname
-sudo sed -e 's/domain4/domain4 virtcompute1/' -i /etc/hosts
-sudo sed -e 's/domain6/domain6 virtcompute1/' -i /etc/hosts
+echo "osdir" | sudo tee /etc/hostname
+sudo sed -e 's/domain4/domain4 osdir/' -i /etc/hosts
+sudo sed -e 's/domain6/domain6 osdir/' -i /etc/hosts
 echo "network: {config: disabled}" | sudo tee -a /etc/cloud/cloud.cfg.d/99-custom-networking.cfg
 sudo sed -e 's/no/yes/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
 sudo sed -e 's/dhcp/none/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
