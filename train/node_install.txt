@@ -145,15 +145,14 @@ openstack tripleo container image prepare default \
   --output-env-file ~/templates/containers-prepare-parameter2.yaml
 
 #####  Add Stack User
-sudo su -
-useradd stack
-passwd stack  # specify a password
-echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack
-chmod 0440 /etc/sudoers.d/stack
-vi /etc/ssh/sshd_config
-uncomment PasswordAuthentication yes
-comment PasswordAuthentication no
-systemctl restart sshd.service
+sudo useradd stack
+sudo passwd stack  # specify a password
+echo "stack ALL=(root) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/stack
+sudo chmod 0440 /etc/sudoers.d/stack
+sudo vi /etc/ssh/sshd_config
+change PasswordAuthentication to yes
+change GSSAPIAuthentication to no
+sudo systemctl restart sshd.service
 exit
 
 ### Back on Director
