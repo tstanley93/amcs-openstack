@@ -142,7 +142,7 @@ sudo yum install -y python3-heat-agent*
 
 openstack tripleo container image prepare default \
   --local-push-destination \
-  --output-env-file ~/templates/containers-prepare-parameter2.yaml
+  --output-env-file ~/containers-prepare-parameter.yaml
 
 #####  Add Stack User
 sudo useradd stack
