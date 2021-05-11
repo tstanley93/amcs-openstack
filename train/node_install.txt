@@ -134,8 +134,10 @@ virtcompute1
 
 #### Install Software
 sudo yum -y update
-sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210421150506.c241a1a.el8.noarch.rpm
-sudo -E tripleo-repos -b train current
+sudo yum install epel-release -y
+sudo yum install screen -y
+sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210511115416.aaf9dc7.el8.noarch.rpm
+sudo -E tripleo-repos -b train current --no-stream
 sudo yum install -y python3-tripleoclient
 or...
 sudo yum install -y python3-heat-agent*
