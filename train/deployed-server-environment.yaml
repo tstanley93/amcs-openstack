@@ -4,9 +4,9 @@ resource_registry:
   OS::TripleO::DeployedServer::Bootstrap: OS::Heat::None
 
   # Network configuration assignments for the Controller
-  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller4.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller.yaml
   # Network configuration assignments for the Compute
-  OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute4.yaml
+  OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute.yaml
   # Network configuration assignments for the BlockStorage
   # OS::TripleO::BlockStorage::Net::SoftwareConfig: /usr/share/openstack-tripleo-heat-templates/network/config/multiple-nics-vlans/cinder-storage.yaml
   # Network configuration assignments for the ObjectStorage
@@ -19,46 +19,46 @@ parameter_defaults:
   # NeutronOVSFirewallDriver: noop
   EnablePackageInstall: True
   NeutronPublicInterface: eth1
-  ControlPlaneDefaultRoute: 10.10.6.25
-  # EC2MetadataIp: 10.10.6.25
+  ControlPlaneDefaultRoute: 192.168.50.11
+  # EC2MetadataIp: 192.168.50.25
   HostnameMap:
-    thomas26-controller-0: controller0
-    thomas26-controller-1: controller1
-    thomas26-controller-2: controller2
-    thomas26-computevirt-0: computevirt0
+    thomas01-controller-0: controller0
+    thomas01-controller-1: controller1
+    thomas01-controller-2: controller2
+    thomas01-computevirt-0: computevirt0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.15
+        - ip_address: 192.168.50.21
       subnets:
-        - cidr: 10.10.6.0/24
+        - cidr: 192.168.50.0/24
       network:
         tags:
-          - 10.10.6.0/24
+          - 192.168.50.0/24
     controller1-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.5
+        - ip_address: 192.168.50.22
       subnets:
-        - cidr: 10.10.6.0/24
+        - cidr: 192.168.50.0/24
       network:
         tags:
-          - 10.10.6.0/24
+          - 192.168.50.0/24
     controller2-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.3
+        - ip_address: 192.168.50.23
       subnets:
-        - cidr: 10.10.6.0/24
+        - cidr: 192.168.50.0/24
       network:
         tags:
-          - 10.10.6.0/24
+          - 192.168.50.0/24
     computevirt0-ctlplane:
       fixed_ips:
-        - ip_address: 10.10.6.7
+        - ip_address: 192.168.50.20
       subnets:
-        - cidr: 10.10.6.0/24
+        - cidr: 192.168.50.0/24
       network:
         tags:
-          - 10.10.6.0/24
+          - 192.168.50.0/24
   
   
   # This section is where deployment-specific configuration is done
@@ -102,11 +102,11 @@ parameter_defaults:
   # RedisVirtualFixedIPs: [{'ip_address':'172.16.0.8'}]
 
   # Customize the IP subnet to match the local environment
-  ManagementNetCidr: '10.10.6.0/24'
+  ManagementNetCidr: '192.168.50.0/24'
   # Customize the IP range to use for static IPs and VIPs
-  ManagementAllocationPools: [{'start': '10.10.6.240', 'end': '10.10.6.250'}]
+  ManagementAllocationPools: [{'start': '192.168.50.240', 'end': '192.168.50.250'}]
   # Gateway router for routable networks
-  ManagementInterfaceDefaultRoute: '10.10.6.25'
+  ManagementInterfaceDefaultRoute: '192.168.50.11'
   # Customize the VLAN ID to match the local environment
   ManagementNetworkVlanID: 60
   # Define the DNS servers (maximum 2) for the overcloud nodes
