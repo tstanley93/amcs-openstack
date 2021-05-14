@@ -18,7 +18,7 @@ resource_registry:
 parameter_defaults:
   # NeutronOVSFirewallDriver: noop
   EnablePackageInstall: True
-  NeutronPublicInterface: eth1
+  NeutronPublicInterface: ens224
   ControlPlaneDefaultRoute: 192.168.50.11
   # EC2MetadataIp: 192.168.50.25
   HostnameMap:
@@ -108,7 +108,7 @@ parameter_defaults:
   # Gateway router for routable networks
   ManagementInterfaceDefaultRoute: '192.168.50.11'
   # Customize the VLAN ID to match the local environment
-  ManagementNetworkVlanID: 60
+  ManagementNetworkVlanID: 350
   # Define the DNS servers (maximum 2) for the overcloud nodes
   DnsServers: ["172.27.1.1","172.27.2.1"]
   # List of Neutron network types for tenant networks (will be used in order)
