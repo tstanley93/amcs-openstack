@@ -110,7 +110,7 @@ parameter_defaults:
   # Customize the VLAN ID to match the local environment
   ManagementNetworkVlanID: 355
   # Define the DNS servers (maximum 2) for the overcloud nodes
-  DnsServers: ["172.27.1.1","172.27.2.1"]
+  DnsServers: ["192.168.5.16","192.168.5.15"]
   # List of Neutron network types for tenant networks (will be used in order)
   # NeutronNetworkType: 'vlan'
   # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
