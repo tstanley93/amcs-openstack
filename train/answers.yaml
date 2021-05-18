@@ -7,10 +7,10 @@ environments:
   - /home/stack/containers-prepare-parameter.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/podman.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/services/neutron-ovn-dvr-ha.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/docker.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/docker-ha.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/host-config-and-reboot.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/neutron-sriov.yaml
-  # - /home/stack/templates/05-network-environment.yaml
   # - /home/stack/templates/overcloud_images_update.yaml
   # - /home/stack/templates/disable-telemetry.yaml
   # - /home/stack/templates/enable-tls.yaml
