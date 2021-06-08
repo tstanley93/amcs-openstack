@@ -108,7 +108,7 @@ parameter_defaults:
   # Gateway router for routable networks
   ManagementInterfaceDefaultRoute: '192.168.50.11'
   # Customize the VLAN ID to match the local environment
-  ManagementNetworkVlanID: 355
+  ManagementNetworkVlanID: 350
   # Define the DNS servers (maximum 2) for the overcloud nodes
   DnsServers: ["192.168.5.16","192.168.5.15"]
   # List of Neutron network types for tenant networks (will be used in order)
