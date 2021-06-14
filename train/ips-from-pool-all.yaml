@@ -76,7 +76,5 @@ parameter_defaults:
     - 10.12.0.87
     tenant:
     - 10.95.1.125
-    external:
-    - 10.144.184.98
     #management:
     #- 172.16.4.252
