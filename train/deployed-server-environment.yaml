@@ -130,6 +130,6 @@ parameter_defaults:
   ComputeVirtSchedulerHints:
     'capabilities:profile': 'compute-%index%'
   TimeZone: 'America/Los_Angeles'
-  ControllerCount: 3
+  ControllerCount: 1
   ComputeVirtCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
