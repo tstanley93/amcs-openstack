@@ -116,10 +116,10 @@ parameter_defaults:
   # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
   # NeutronTunnelTypes: 'vxlan'
   NeutronBridgeMappings:
-      - float:br-ex
+    - float:br-ex
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronNetworkVLANRanges: 
-     - float:10:10
+    - float:300:300
   NeutronFlatNetworks: "float"
   # NeutronExternalNetworkBridge: "''"
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
