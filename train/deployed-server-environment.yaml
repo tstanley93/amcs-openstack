@@ -22,10 +22,10 @@ parameter_defaults:
   ControlPlaneDefaultRoute: 192.168.50.11
   # EC2MetadataIp: 192.168.50.25
   HostnameMap:
-    thomas03-controller-0: controller0
-    thomas03-controller-1: controller1
-    thomas03-controller-2: controller2
-    thomas03-computevirt-0: computevirt0
+    thomas04-controller-0: controller0
+    # thomas04-controller-1: controller1
+    # thomas04-controller-2: controller2
+    thomas04-computevirt-0: computevirt0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
@@ -35,22 +35,22 @@ parameter_defaults:
       network:
         tags:
           - 192.168.50.0/24
-    controller1-ctlplane:
-      fixed_ips:
-        - ip_address: 192.168.50.22
-      subnets:
-        - cidr: 192.168.50.0/24
-      network:
-        tags:
-          - 192.168.50.0/24
-    controller2-ctlplane:
-      fixed_ips:
-        - ip_address: 192.168.50.23
-      subnets:
-        - cidr: 192.168.50.0/24
-      network:
-        tags:
-          - 192.168.50.0/24
+    # controller1-ctlplane:
+    #   fixed_ips:
+    #     - ip_address: 192.168.50.22
+    #   subnets:
+    #     - cidr: 192.168.50.0/24
+    #   network:
+    #     tags:
+    #       - 192.168.50.0/24
+    # controller2-ctlplane:
+    #   fixed_ips:
+    #     - ip_address: 192.168.50.23
+    #   subnets:
+    #     - cidr: 192.168.50.0/24
+    #   network:
+    #     tags:
+    #       - 192.168.50.0/24
     computevirt0-ctlplane:
       fixed_ips:
         - ip_address: 192.168.50.20
@@ -78,25 +78,25 @@ parameter_defaults:
   StorageMgmtNetCidr: '10.94.0.0/16'
   InternalApiNetCidr: '10.92.0.0/16'
   TenantNetCidr: '10.95.0.0/16'
-  ExternalNetCidr: '10.144.184.0/22'
+  ExternalNetCidr: '192.168.3.0/24'
   # Customize the VLAN IDs to match the local environment
   StorageNetworkVlanID: 12
   StorageMgmtNetworkVlanID: 93
   InternalApiNetworkVlanID: 94
   TenantNetworkVlanID: 95
-  ExternalNetworkVlanID: 10
+  ExternalNetworkVlanID: 300
   StorageAllocationPools: [{'start': '10.12.0.50', 'end': '10.12.0.99'}]
   StorageMgmtAllocationPools: [{'start': '10.94.1.100', 'end': '10.94.1.200'}]
   InternalApiAllocationPools: [{'start': '10.92.1.100', 'end': '10.92.1.200'}]
   TenantAllocationPools: [{'start': '10.95.1.100', 'end': '10.95.1.200'}]
   # Leave room if the external network is also used for floating IPs
-  ExternalAllocationPools: [{'start': '10.144.184.35', 'end': '10.144.184.65'}]
+  ExternalAllocationPools: [{'start': '192.168.3.220', 'end': '192.168.3.225'}]
   # Gateway routers for routable networks
-  ExternalInterfaceDefaultRoute: '10.144.187.254'
+  ExternalInterfaceDefaultRoute: '192.168.3.1'
   ### Custom VIP addresses
   # ControlFixedIPs: [{'ip_address':'192.168.201.101'}]
   InternalApiVirtualFixedIPs: [{'ip_address':'10.92.1.120'}]
-  PublicVirtualFixedIPs: [{'ip_address':'10.144.184.86'}]
+  PublicVirtualFixedIPs: [{'ip_address':'192.168.3.219'}]
   StorageVirtualFixedIPs: [{'ip_address':'10.12.0.78'}]
   StorageMgmtVirtualFixedIPs: [{'ip_address':'10.94.1.111'}]
   # RedisVirtualFixedIPs: [{'ip_address':'172.16.0.8'}]
