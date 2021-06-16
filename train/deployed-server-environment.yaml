@@ -17,6 +17,7 @@ resource_registry:
 
 parameter_defaults:
   # NeutronOVSFirewallDriver: noop
+  CloudDomain: amcs.com
   EnablePackageInstall: True
   NeutronPublicInterface: ens224
   ControlPlaneDefaultRoute: 192.168.50.11
