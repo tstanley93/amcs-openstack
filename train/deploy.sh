@@ -269,6 +269,7 @@ openstack overcloud deploy \
 -n /home/stack/templates/network_data.yaml \
 --stack ${depName} \
 --ntp-server "time.google.com" \
+--libvirt-type qemu \
 --disable-validations \
 --overcloud-ssh-user stack \
 --overcloud-ssh-key /home/stack/.ssh/id_rsa \
