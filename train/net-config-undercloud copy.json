@@ -6,6 +6,19 @@
             "use_dhcp": false,
             "dns_servers": {"get_param": "DnsServers"},
             "domain": {"get_param": "DnsSearchDomains"},
+            "addresses": [
+                {
+                    "ip_netmask": {
+                        "list_join": [
+                            "/",
+                            [
+                                {"get_param": "ControlPlaneIp"},
+                                {"get_param": "ControlPlaneSubnetCidr"}
+                            ]
+                        ]
+                    }
+                }
+            ],
             "routes": {"get_param": "ControlPlaneStaticRoutes"},
             "members": [
                 {
