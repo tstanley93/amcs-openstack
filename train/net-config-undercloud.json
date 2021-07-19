@@ -6,6 +6,11 @@
             "use_dhcp": false,
             "dns_servers": {"get_param": "DnsServers"},
             "domain": {"get_param": "DnsSearchDomains"},
+            "addresses": [
+                {
+                    "ip_netmask": "192.168.50.11/24"
+                }
+            ],
             "routes": {"get_param": "ControlPlaneStaticRoutes"},
             "members": [
                 {
