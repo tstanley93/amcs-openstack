@@ -1,0 +1,24 @@
+{
+    "network_config": [
+        {
+            "type": "linux_bridge",
+            "name": "br-ctlplane",
+            "members": [
+                {
+                    "type": "interface",
+                    "name": "{{LOCAL_INTERFACE}}",
+                    "primary": "true",
+                    "mtu": "{{LOCAL_MTU}}",
+                    "dns_servers": "{{UNDERCLOUD_NAMESERVERS}}"
+                }
+            ],
+            "addresses": [
+                {
+                    "ip_netmask": "{{LOCAL_IP}}"
+                }
+            ],
+            "routes": "{{HOST_ROUTES}}",
+            "mtu": "{{LOCAL_MTU}}"
+        }
+    ]
+}

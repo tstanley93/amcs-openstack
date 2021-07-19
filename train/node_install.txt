@@ -152,6 +152,15 @@ openstack tripleo container image prepare default \
   --local-push-destination \
   --output-env-file ~/containers-prepare-parameter.yaml
 
+git clone https://github.com/tstanley93/amcs-openstack.git
+cd ~/amcs-openstack/
+git checkout train-home
+cd ~
+ln -s /home/stack/amcs-openstack/train/undercloud_home.conf ~/undercloud.conf
+ln -s /home/stack/amcs-openstack/train/ ~/templates
+
+openstack undercloud install 
+
 #####  Add Stack User
 sudo useradd stack
 sudo passwd stack  # specify a password
