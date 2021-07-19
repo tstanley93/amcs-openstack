@@ -141,7 +141,7 @@ sudo yum -y update
 sudo yum install -y epel-release
 sudo yum install -y screen git tcpdump open-vm-tools rsyslog
 sudo yum remove -y epel-release
-sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210608171453.e86d752.el8.noarch.rpm
+sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210714130758.06f41a6.el8.noarch.rpm
 sudo -E tripleo-repos -b train current --no-stream
 sudo yum install -y python3-tripleoclient
 or...
