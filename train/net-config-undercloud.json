@@ -3,6 +3,7 @@
         {
             "type": "linux_bridge",
             "name": "br-ctlplane",
+            "ovs_extra": [],
             "members": [
                 {
                     "type": "interface",
