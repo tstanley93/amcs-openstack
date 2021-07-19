@@ -1,0 +1,21 @@
+- network_config:
+  - type: linux_bridge
+    name: br-ctlplane
+    use_dhcp: false
+    dns_servers:
+      get_param: DnsServers
+    domain:
+      get_param: DnsSearchDomains
+    addresses:
+    - ip_netmask:
+        list_join:
+        - /
+        - - get_param: ControlPlaneIp
+          - get_param: ControlPlaneSubnetCidr
+    routes: {get_param: ControlPlaneStaticRoutes}
+    members:
+    - type: interface
+      name: interface_name
+      # force the MAC address of the bridge to this interface
+      primary: true
+      mtu: {get_param: UndercloudLocalMtu}
