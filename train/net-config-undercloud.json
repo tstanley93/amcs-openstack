@@ -1,25 +1,47 @@
-{
-    "network_config": [
-        {
-            "type": "linux_bridge",
-            "name": "br-ctlplane",
-            "ovs_extra": [],
-            "members": [
-                {
-                    "type": "interface",
-                    "name": "{{LOCAL_INTERFACE}}",
-                    "primary": "true",
-                    "mtu": "{{LOCAL_MTU}}",
-                    "dns_servers": "{{UNDERCLOUD_NAMESERVERS}}"
-                }
-            ],
-            "addresses": [
-                {
-                    "ip_netmask": "{{LOCAL_IP}}"
-                }
-            ],
-            "routes": "{{HOST_ROUTES}}",
-            "mtu": "{{LOCAL_MTU}}"
-        }
-    ]
-}
+[
+    {
+        "network_config": [
+            {
+                "type": "linux_bridge",
+                "name": "br-ctlplane",
+                "use_dhcp": false,
+                "dns_servers": {
+                    "get_param": "DnsServers"
+                },
+                "domain": {
+                    "get_param": "DnsSearchDomains"
+                },
+                "addresses": [
+                    {
+                        "ip_netmask": {
+                            "list_join": [
+                                "/",
+                                [
+                                    {
+                                        "get_param": "ControlPlaneIp"
+                                    },
+                                    {
+                                        "get_param": "ControlPlaneSubnetCidr"
+                                    }
+                                ]
+                            ]
+                        }
+                    }
+                ],
+                "routes": {
+                    "get_param": "ControlPlaneStaticRoutes"
+                },
+                "members": [
+                    {
+                        "type": "interface",
+                        "name": "interface_name",
+                        "primary": true,
+                        "mtu": {
+                            "get_param": "UndercloudLocalMtu"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]
