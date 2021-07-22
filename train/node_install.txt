@@ -139,13 +139,13 @@ chmod 0440 /etc/sudoers.d/stack
 exit
 sudo yum -y update
 sudo yum install -y epel-release
-sudo yum install -y screen git tcpdump open-vm-tools rsyslog
+sudo yum install -y git tcpdump open-vm-tools rsyslog
 sudo yum remove -y epel-release
 sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210714130758.06f41a6.el8.noarch.rpm
 sudo -E tripleo-repos -b train current --no-stream
-sudo yum install -y python3-tripleoclient
+sudo yum install -y python3-tripleoclient (For Undercloud Nodes)
 or...
-sudo yum install -y python3-heat-agent*
+sudo yum install -y python3-heat-agent*  (For Overcloud Nodes)
 sudo reboot
 
 openstack tripleo container image prepare default \
