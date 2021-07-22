@@ -4,9 +4,9 @@ resource_registry:
   OS::TripleO::DeployedServer::Bootstrap: OS::Heat::None
 
   # Network configuration assignments for the Controller
-  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller5.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller4.yaml
   # Network configuration assignments for the Compute
-  OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute5.yaml
+  OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute4.yaml
   # Network configuration assignments for the BlockStorage
   # OS::TripleO::BlockStorage::Net::SoftwareConfig: /usr/share/openstack-tripleo-heat-templates/network/config/multiple-nics-vlans/cinder-storage.yaml
   # Network configuration assignments for the ObjectStorage
