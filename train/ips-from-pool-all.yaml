@@ -47,9 +47,9 @@ parameter_defaults:
   ControllerIPs:
     # Each controller will get an IP from the lists below, first controller, first IP
     external:
-    - 10.144.184.11
     - 10.144.184.12
     - 10.144.184.13
+    - 10.144.184.14
     internal_api:
     - 10.92.1.102
     - 10.92.1.105
@@ -73,7 +73,7 @@ parameter_defaults:
     internal_api:
     - 10.92.1.128
     storage:
-    - 10.12.0.87
+    - 10.12.0.92
     tenant:
     - 10.95.1.125
     #management:
