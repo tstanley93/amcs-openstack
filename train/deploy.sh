@@ -264,17 +264,17 @@ noLog "INFO Starting OverCloud Deployment or Update..."
 noLog "INFO -------------------------------------------------------------"
 
 openstack overcloud deploy \
---answers-file /home/stack/templates/answers.yaml \
--r /home/stack/templates/my_roles_data.yaml \
--n /home/stack/templates/network_data.yaml \
---stack ${depName} \
---ntp-server "time.google.com" \
---libvirt-type qemu \
---deployed-server \
---disable-validations \
---overcloud-ssh-user stack \
---overcloud-ssh-key /home/stack/.ssh/id_rsa \
-2>&1 | tee ${depName}_install.log
+    --answers-file /home/stack/templates/answers.yaml \
+    -r /home/stack/templates/my_roles_data.yaml \
+    -n /home/stack/templates/network_data.yaml \
+    --stack ${depName} \
+    --ntp-server "time.google.com" \
+    --libvirt-type qemu \
+    --deployed-server \
+    --disable-validations \
+    --overcloud-ssh-user stack \
+    --overcloud-ssh-key /home/stack/.ssh/id_rsa \
+    2>&1 | tee ${depName}_install.log
 
 ## Exiting
 end=$(date +%s)
