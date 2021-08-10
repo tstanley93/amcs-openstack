@@ -195,8 +195,8 @@ exit
 echo "" > .ssh/known_hosts
 
 echo "osdir" | sudo tee /etc/hostname
-sudo sed -e 's/domain4/domain4 osdir/' -i /etc/hosts
-sudo sed -e 's/domain6/domain6 osdir/' -i /etc/hosts
+sudo sed -e 's/domain4/domain4 controller2.amcs.com controller2/' -i /etc/hosts
+sudo sed -e 's/domain6/domain6 controller2.amcs.com controller2/' -i /etc/hosts
 echo "network: {config: disabled}" | sudo tee -a /etc/cloud/cloud.cfg.d/99-custom-networking.cfg
 sudo sed -e 's/no/yes/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
 sudo sed -e 's/dhcp/none/' -i /etc/sysconfig/network-scripts/ifcfg-eth0
