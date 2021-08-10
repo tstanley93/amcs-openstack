@@ -146,6 +146,8 @@ sudo -E tripleo-repos -b train current --no-stream
 sudo yum install -y python3-tripleoclient (For Undercloud Nodes)
 or...
 sudo yum install -y python3-heat-agent*  (For Overcloud Nodes)
+sudo sed -e 's/domain4/domain4 controller2.amcs.com controller2/' -i /etc/hosts
+sudo sed -e 's/domain6/domain6 controller2.amcs.com controller2/' -i /etc/hosts
 sudo reboot
 
 openstack tripleo container image prepare default \
@@ -160,6 +162,20 @@ ln -s /home/stack/amcs-openstack/train/undercloud_home.conf ~/undercloud.conf
 ln -s /home/stack/amcs-openstack/train/ ~/templates
 
 openstack undercloud install 
+
+#####  Networks
+Controller:
+Storage - ens224
+Storagemgmt - ens256
+Internal API - ens161
+Tenant - ens193
+External - ens225
+
+Compute:
+Storage - ens224
+Internal API - ens193
+Tenant - ens256
+External - ens161
 
 #####  Add Stack User
 sudo useradd stack
