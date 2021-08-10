@@ -24,8 +24,8 @@ parameter_defaults:
   # EC2MetadataIp: 192.168.50.25
   HostnameMap:
     thomas06-controller-0: controller0
-    # thomas06-controller-1: controller1
-    # thomas06-controller-2: controller2
+    thomas06-controller-1: controller1
+    thomas06-controller-2: controller2
     thomas06-computevirt-0: computevirt0
   DeployedServerPortMap:
     controller0-ctlplane:
@@ -36,22 +36,22 @@ parameter_defaults:
       network:
         tags:
           - 192.168.50.0/24
-    # controller1-ctlplane:
-    #   fixed_ips:
-    #     - ip_address: 192.168.50.22
-    #   subnets:
-    #     - cidr: 192.168.50.0/24
-    #   network:
-    #     tags:
-    #       - 192.168.50.0/24
-    # controller2-ctlplane:
-    #   fixed_ips:
-    #     - ip_address: 192.168.50.23
-    #   subnets:
-    #     - cidr: 192.168.50.0/24
-    #   network:
-    #     tags:
-    #       - 192.168.50.0/24
+    controller1-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.50.87
+      subnets:
+        - cidr: 192.168.50.0/24
+      network:
+        tags:
+          - 192.168.50.0/24
+    controller2-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.50.88
+      subnets:
+        - cidr: 192.168.50.0/24
+      network:
+        tags:
+          - 192.168.50.0/24
     computevirt0-ctlplane:
       fixed_ips:
         - ip_address: 192.168.50.86
@@ -131,6 +131,6 @@ parameter_defaults:
   ComputeVirtSchedulerHints:
     'capabilities:profile': 'compute-%index%'
   TimeZone: 'America/Los_Angeles'
-  ControllerCount: 1
+  ControllerCount: 3
   ComputeVirtCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
