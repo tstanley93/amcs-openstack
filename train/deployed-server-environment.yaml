@@ -136,7 +136,7 @@ parameter_defaults:
   # NeutronExternalNetworkBridge: "''"
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
-  # BondInterfaceOvsOptions: ""
+  BondInterfaceOvsOptions: ""
   ComputeVirtExtraConfig:        
     nova::disk_allocation_ratio: 4.0
   ComputeVirtSchedulerHints:
@@ -150,4 +150,3 @@ parameter_defaults:
   ComputeVirtCount: 1
   ComputeMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
-  BondInterfaceOvsOptions: "bond_mode=balance-tcp lacp=active other-config:lacp-fallback-ab=true"

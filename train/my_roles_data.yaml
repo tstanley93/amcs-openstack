@@ -209,7 +209,7 @@
       subnet: tenant_subnet
     Storage:
       subnet: storage_subnet
-  HostnameFormatDefault: '%stackname%-novacompute-%index%'
+  HostnameFormatDefault: '%stackname%-computevirt-%index%'
   RoleParametersDefault:
     TunedProfileName: "virtual-host"
   # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
@@ -290,7 +290,7 @@
       subnet: tenant_subnet
     Storage:
       subnet: storage_subnet
-  HostnameFormatDefault: '%stackname%-novacompute-%index%'
+  HostnameFormatDefault: '%stackname%-computemetal-%index%'
   RoleParametersDefault:
     TunedProfileName: "virtual-host"
   # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
