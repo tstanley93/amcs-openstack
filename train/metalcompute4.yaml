@@ -149,10 +149,10 @@ resources:
                     get_param: BondInterfaceOvsOptions
                   members:
                   - type: interface
-                    name: p2p1
+                    name: ens1f0
                     primary: true
                   - type: interface
-                    name: p2p2
+                    name: ens1f1
                 - type: vlan
                   vlan_id:
                     get_param: StorageNetworkVlanID
