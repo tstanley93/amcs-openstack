@@ -150,3 +150,4 @@ parameter_defaults:
   ComputeVirtCount: 1
   ComputeMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
+  BondInterfaceOvsOptions: "bond_mode=balance-tcp lacp=active other-config:lacp-fallback-ab=true"
