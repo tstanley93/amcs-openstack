@@ -146,8 +146,8 @@ sudo -E tripleo-repos -b train current --no-stream
 sudo yum install -y python3-tripleoclient (For Undercloud Nodes)
 or...
 sudo yum install -y python3-heat-agent*  (For Overcloud Nodes)
-sudo sed -e 's/domain4/domain4 controller2.amcs.com controller2/' -i /etc/hosts
-sudo sed -e 's/domain6/domain6 controller2.amcs.com controller2/' -i /etc/hosts
+sudo sed -e 's/domain4/domain4 computemetal0.amcs.com computemetal0/' -i /etc/hosts
+sudo sed -e 's/domain6/domain6 computemetal0.amcs.com computemetal0/' -i /etc/hosts
 sudo reboot
 
 openstack tripleo container image prepare default \
