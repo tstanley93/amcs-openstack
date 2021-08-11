@@ -110,6 +110,10 @@ parameters:
       guaranteed to pass through the data path of the segments in the
       External network.
     type: number
+  ExternalNetworkVlanID:
+    default: 10
+    description: Vlan ID for the tenant network traffic.
+    type: number
 
   DnsServers: # Override this via parameter_defaults
     default: []
