@@ -99,7 +99,11 @@ parameters:
       Unless the default is changed, the parameter is automatically resolved
       from the subnet host_routes attribute.
     type: json
-
+  BondInterfaceOvsOptions:
+    default: ''
+    description: The ovs_options string for the bond interface. Set things like
+                 lacp=active and/or bond_mode=balance-slb using this option.
+    type: string
   ExternalMtu:
     default: 1500
     description: The maximum transmission unit (MTU) size(in bytes) that is
