@@ -15,5 +15,5 @@ environments:
   # - /home/stack/templates/disable-telemetry.yaml
   - /home/stack/templates/enable-tls.yaml
   - /home/stack/templates/inject-trust-anchor.yaml
-  # - /usr/share/openstack-tripleo-heat-templates/environments/ssl/tls-endpoints-public-ip.yaml
+  - /usr/share/openstack-tripleo-heat-templates/environments/ssl/tls-endpoints-public-ip.yaml
   - /home/stack/templates/storage-environment.yaml
