@@ -142,12 +142,12 @@ sudo yum install -y epel-release
 sudo yum install -y git tcpdump open-vm-tools rsyslog
 sudo yum remove -y epel-release
 sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210810083754.222e81c.el8.noarch.rpm
-sudo -E tripleo-repos -b train current --no-stream
+sudo -E tripleo-repos -b train current
 sudo yum install -y python3-tripleoclient (For Undercloud Nodes)
 or...
 sudo yum install -y python3-heat-agent*  (For Overcloud Nodes)
-sudo sed -e 's/domain4/domain4 computemetal0.amcs.com computemetal0/' -i /etc/hosts
-sudo sed -e 's/domain6/domain6 computemetal0.amcs.com computemetal0/' -i /etc/hosts
+sudo sed -e 's/domain4/domain4 os16dir.pdsea.f5net.com os16dir/' -i /etc/hosts
+sudo sed -e 's/domain6/domain6 os16dir.pdsea.f5net.com os16dir/' -i /etc/hosts
 sudo reboot
 
 openstack tripleo container image prepare default \
@@ -156,10 +156,18 @@ openstack tripleo container image prepare default \
 
 git clone https://github.com/tstanley93/amcs-openstack.git
 cd ~/amcs-openstack/
-git checkout train-home
+git checkout train-pdlab
 cd ~
 ln -s /home/stack/amcs-openstack/train/undercloud_home.conf ~/undercloud.conf
 ln -s /home/stack/amcs-openstack/train/ ~/templates
+
+sudo mkdir /etc/pki/instack-certs
+sudo cp os16dir.pdsea.f5net.com.pem /etc/pki/instack-certs
+sudo semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
+sudo restorecon -R /etc/pki/instack-certs
+
+sudo cp ca.crt /etc/pki/ca-trust/source/anchors/ca.pem
+sudo update-ca-trust extract
 
 openstack undercloud install 
 
