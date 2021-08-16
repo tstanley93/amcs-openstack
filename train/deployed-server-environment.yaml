@@ -19,58 +19,58 @@ resource_registry:
 
 parameter_defaults:
   # NeutronOVSFirewallDriver: noop
-  CloudDomain: amcs.com
+  CloudDomain: pdsea.f5net.com
   EnablePackageInstall: True
   NeutronPublicInterface: ens224
-  ControlPlaneDefaultRoute: 192.168.50.11
-  # EC2MetadataIp: 192.168.50.25
+  ControlPlaneDefaultRoute: 10.146.171.11
+  # EC2MetadataIp: 10.146.171.25
   HostnameMap:
-    thomas07-controller-0: controller0
-    thomas07-controller-1: controller1
-    thomas07-controller-2: controller2
-    thomas07-computevirt-0: computevirt0
-    thomas07-computemetal-0: computemetal0
+    vnfcloud-controller-0: controller0
+    vnfcloud-controller-1: controller1
+    vnfcloud-controller-2: controller2
+    vnfcloud-computevirt-0: computevirt0
+    vnfcloud-computemetal-0: computemetal0
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
-        - ip_address: 192.168.50.85
+        - ip_address: 10.146.171.85
       subnets:
-        - cidr: 192.168.50.0/24
+        - cidr: 10.146.171.0/23
       network:
         tags:
-          - 192.168.50.0/24
+          - 10.146.171.0/23
     controller1-ctlplane:
       fixed_ips:
-        - ip_address: 192.168.50.87
+        - ip_address: 10.146.171.87
       subnets:
-        - cidr: 192.168.50.0/24
+        - cidr: 10.146.171.0/23
       network:
         tags:
-          - 192.168.50.0/24
+          - 10.146.171.0/23
     controller2-ctlplane:
       fixed_ips:
-        - ip_address: 192.168.50.88
+        - ip_address: 10.146.171.88
       subnets:
-        - cidr: 192.168.50.0/24
+        - cidr: 10.146.171.0/23
       network:
         tags:
-          - 192.168.50.0/24
+          - 10.146.171.0/23
     computevirt0-ctlplane:
       fixed_ips:
-        - ip_address: 192.168.50.86
+        - ip_address: 10.146.171.86
       subnets:
-        - cidr: 192.168.50.0/24
+        - cidr: 10.146.171.0/23
       network:
         tags:
-          - 192.168.50.0/24
+          - 10.146.171.0/23
     computemetal0-ctlplane:
       fixed_ips:
-        - ip_address: 192.168.50.91
+        - ip_address: 10.146.171.91
       subnets:
-        - cidr: 192.168.50.0/24
+        - cidr: 10.146.171.0/23
       network:
         tags:
-          - 192.168.50.0/24
+          - 10.146.171.0/23
   
   
   # This section is where deployment-specific configuration is done
@@ -86,39 +86,39 @@ parameter_defaults:
   #                attribute is resolved from the ctlplane subnet(s).
   #
   # Customize the IP subnets to match the local environment
-  StorageNetCidr: '10.12.0.0/24'
+  StorageNetCidr: '10.146.130.0/23'
   StorageMgmtNetCidr: '10.94.0.0/16'
   InternalApiNetCidr: '10.92.0.0/16'
   TenantNetCidr: '10.95.0.0/16'
-  ExternalNetCidr: '10.144.184.0/22'
+  ExternalNetCidr: '10.146.172.0/23'
   # Customize the VLAN IDs to match the local environment
-  StorageNetworkVlanID: 12
+  StorageNetworkVlanID: 2248
   StorageMgmtNetworkVlanID: 93
   InternalApiNetworkVlanID: 94
   TenantNetworkVlanID: 95
-  ExternalNetworkVlanID: 10
-  StorageAllocationPools: [{'start': '10.12.0.50', 'end': '10.12.0.99'}]
+  ExternalNetworkVlanID: 92
+  StorageAllocationPools: [{'start': '10.146.130.160', 'end': '10.146.130.170'}]
   StorageMgmtAllocationPools: [{'start': '10.94.1.100', 'end': '10.94.1.200'}]
   InternalApiAllocationPools: [{'start': '10.92.1.100', 'end': '10.92.1.200'}]
   TenantAllocationPools: [{'start': '10.95.1.100', 'end': '10.95.1.200'}]
   # Leave room if the external network is also used for floating IPs
-  ExternalAllocationPools: [{'start': '10.144.184.20', 'end': '10.144.184.25'}]
+  ExternalAllocationPools: [{'start': '10.146.172.90', 'end': '10.146.172.100'}]
   # Gateway routers for routable networks
-  ExternalInterfaceDefaultRoute: '10.144.187.254'
+  ExternalInterfaceDefaultRoute: '10.146.173.254'
   ### Custom VIP addresses
   # ControlFixedIPs: [{'ip_address':'192.168.201.101'}]
   InternalApiVirtualFixedIPs: [{'ip_address':'10.92.1.120'}]
-  PublicVirtualFixedIPs: [{'ip_address':'10.144.184.11'}]
-  StorageVirtualFixedIPs: [{'ip_address':'10.12.0.78'}]
+  PublicVirtualFixedIPs: [{'ip_address':'10.146.172.101'}]
+  StorageVirtualFixedIPs: [{'ip_address':'10.146.130.78'}]
   StorageMgmtVirtualFixedIPs: [{'ip_address':'10.94.1.111'}]
   # RedisVirtualFixedIPs: [{'ip_address':'172.16.0.8'}]
 
   # Customize the IP subnet to match the local environment
-  ManagementNetCidr: '192.168.50.0/24'
+  ManagementNetCidr: '10.146.171.0/24'
   # Customize the IP range to use for static IPs and VIPs
-  ManagementAllocationPools: [{'start': '192.168.50.240', 'end': '192.168.50.250'}]
+  ManagementAllocationPools: [{'start': '10.146.171.240', 'end': '10.146.171.250'}]
   # Gateway router for routable networks
-  ManagementInterfaceDefaultRoute: '192.168.50.11'
+  ManagementInterfaceDefaultRoute: '10.146.171.11'
   # Customize the VLAN ID to match the local environment
   ManagementNetworkVlanID: 90
   # Define the DNS servers (maximum 2) for the overcloud nodes
@@ -148,5 +148,5 @@ parameter_defaults:
   TimeZone: 'America/Los_Angeles'
   ControllerCount: 3
   ComputeVirtCount: 1
-  ComputeMetalCount: 1
+  ComputeMetalCount: 0
   NetworkDeploymentActions: ['CREATE','UPDATE']
