@@ -33,7 +33,7 @@ parameter_defaults:
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
-        - ip_address: 10.146.171.85
+        - ip_address: 10.146.171.14
       subnets:
         - cidr: 10.146.171.0/23
       network:
@@ -41,7 +41,7 @@ parameter_defaults:
           - 10.146.171.0/23
     controller1-ctlplane:
       fixed_ips:
-        - ip_address: 10.146.171.87
+        - ip_address: 10.146.171.15
       subnets:
         - cidr: 10.146.171.0/23
       network:
@@ -49,7 +49,7 @@ parameter_defaults:
           - 10.146.171.0/23
     controller2-ctlplane:
       fixed_ips:
-        - ip_address: 10.146.171.88
+        - ip_address: 10.146.171.16
       subnets:
         - cidr: 10.146.171.0/23
       network:
@@ -57,7 +57,7 @@ parameter_defaults:
           - 10.146.171.0/23
     computevirt0-ctlplane:
       fixed_ips:
-        - ip_address: 10.146.171.86
+        - ip_address: 10.146.171.17
       subnets:
         - cidr: 10.146.171.0/23
       network:
