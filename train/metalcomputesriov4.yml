@@ -149,10 +149,10 @@ resources:
                     get_param: BondInterfaceOvsOptions
                   members:
                   - type: interface
-                    name: ens1f0
+                    name: eno1np0
                     primary: true
                   - type: interface
-                    name: ens1f1
+                    name: eno2np1
                 - type: vlan
                   vlan_id:
                     get_param: StorageNetworkVlanID
@@ -175,14 +175,14 @@ resources:
                   vlan_id:
                     get_param: ExternalNetworkVlanID
               - type: interface
-                name: p1p1
+                name: ens3f0
                 mtu: 9000
                 use_dhcp: false
                 defroute: false
                 nm_controlled: true
                 hotplug: true
               - type: interface
-                name: p1p2
+                name: ens3f1
                 mtu: 9000
                 use_dhcp: false
                 defroute: false
