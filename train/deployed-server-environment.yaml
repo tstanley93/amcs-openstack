@@ -140,10 +140,12 @@ parameter_defaults:
   # NeutronTunnelTypes: 'vxlan'
   NeutronBridgeMappings:
     - float:br-ex
+    - provider:br-ex
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronNetworkVLANRanges: 
     - float:10:10
-  NeutronFlatNetworks: "float"
+    - provider:100:109
+  NeutronFlatNetworks: "float,provider"
   # NeutronExternalNetworkBridge: "''"
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
@@ -177,5 +179,5 @@ parameter_defaults:
   ControllerCount: 3
   ComputeVirtCount: 1
   ComputeMetalCount: 0
-  ComputeSriovMetalCount: 1
+  ComputeSriovMetalCount: 0
   NetworkDeploymentActions: ['CREATE','UPDATE']
