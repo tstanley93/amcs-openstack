@@ -125,7 +125,7 @@ parameter_defaults:
   # RedisVirtualFixedIPs: [{'ip_address':'172.16.0.8'}]
 
   # Customize the IP subnet to match the local environment
-  ManagementNetCidr: '10.146.171.0/23'
+  ManagementNetCidr: '10.146.171.0/24'
   # Customize the IP range to use for static IPs and VIPs
   ManagementAllocationPools: [{'start': '10.146.171.240', 'end': '10.146.171.250'}]
   # Gateway router for routable networks
