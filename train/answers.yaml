@@ -8,7 +8,7 @@ environments:
   - /usr/share/openstack-tripleo-heat-templates/environments/podman.yaml
   - /home/stack/templates/docker-ha.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/host-config-and-reboot.yaml
-  - /home/stack/templates/neutron-sriov.yaml
+  - /home/stack/templates/neutron-ovn-sriov.yaml
   # - /home/stack/templates/overcloud_images_update.yaml
   # - /home/stack/templates/disable-telemetry.yaml
   - /home/stack/templates/enable-tls.yaml
