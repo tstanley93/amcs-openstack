@@ -29,6 +29,13 @@ resource_registry:
   OS::TripleO::ComputeMetal::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/tenant_from_pool.yaml
   #OS::TripleO::ComputeMetal::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
 
+  OS::TripleO::ComputeSriovMetal::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ComputeSriovMetal::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ComputeSriovMetal::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
+  OS::TripleO::ComputeSriovMetal::Ports::StorageMgmtPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
+  OS::TripleO::ComputeSriovMetal::Ports::TenantPort: /usr/share/openstack-tripleo-heat-templates/network/ports/tenant_from_pool.yaml
+  #OS::TripleO::ComputeSriovMetal::Ports::ManagementPort: /usr/share/openstack-tripleo-heat-templates/network/ports/management_from_pool.yaml
+
   OS::TripleO::CephStorage::Ports::ExternalPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
   OS::TripleO::CephStorage::Ports::InternalApiPort: /usr/share/openstack-tripleo-heat-templates/network/ports/noop.yaml
   OS::TripleO::CephStorage::Ports::StoragePort: /usr/share/openstack-tripleo-heat-templates/network/ports/storage_from_pool.yaml
@@ -93,5 +100,15 @@ parameter_defaults:
     - 10.146.130.164
     tenant:
     - 10.95.1.127
+    #management:
+    #- 172.16.4.252
+  ComputeSriovMetalIPs:
+    # Each compute will get an IP from the lists below, first computevirt, first IP
+    internal_api:
+    - 10.92.1.130
+    storage:
+    - 10.146.130.165
+    tenant:
+    - 10.95.1.128
     #management:
     #- 172.16.4.252
