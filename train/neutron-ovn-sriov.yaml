@@ -14,10 +14,10 @@ parameter_defaults:
   NeutronMechanismDrivers: ['sriovnicswitch','ovn']
   NovaSchedulerDefaultFilters: ['RetryFilter','AvailabilityZoneFilter','ComputeFilter','ComputeCapabilitiesFilter','ImagePropertiesFilter','ServerGroupAntiAffinityFilter','ServerGroupAffinityFilter','PciPassthroughFilter']
   NovaSchedulerAvailableFilters: ["nova.scheduler.filters.all_filters","nova.scheduler.filters.pci_passthrough_filter.PciPassthroughFilter"]
-  ControllerSriovParameters:
-    OVNCMSOptions: "enable-chassis-as-gw"
-  NetworkerSriovParameters:
-    OVNCMSOptions: "enable-chassis-as-gw"
+  # ControllerSriovParameters:
+  #   OVNCMSOptions: "enable-chassis-as-gw"
+  # NetworkerSriovParameters:
+  #   OVNCMSOptions: "enable-chassis-as-gw"
   NovaPCIPassthrough:
     - devname: "ens3f0"
       physical_network: "provider"

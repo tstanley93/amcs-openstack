@@ -151,7 +151,7 @@ parameter_defaults:
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
   BondInterfaceOvsOptions: "bond_mode=balance-slb lacp=off"
   # These settings are specific to our Dell Servers for SR-IOV
-  DellComputesriovParameters:
+  ComputeSriovMetalParameters:
     KernelArgs: "intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=512 isolcpus=1-15,17-31,33-47,49-63"
     TunedProfileName: "cpu-partitioning"
     IsolCpusList: "1-15,17-31,33-47,49-63"    
