@@ -211,7 +211,7 @@
       subnet: tenant_subnet
     Storage:
       subnet: storage_subnet
-  HostnameFormatDefault: '%stackname%-novacompute-%index%'
+  HostnameFormatDefault: '%stackname%-computevirt-%index%'
   RoleParametersDefault:
     TunedProfileName: "virtual-host"
   # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
@@ -220,11 +220,11 @@
   # composable roles.
   uses_deprecated_params: True
   deprecated_param_image: 'NovaImage'
-  deprecated_param_extraconfig: 'NovaComputeExtraConfig'
-  deprecated_param_metadata: 'NovaComputeServerMetadata'
-  deprecated_param_scheduler_hints: 'NovaComputeSchedulerHints'
-  deprecated_param_ips: 'NovaComputeIPs'
-  deprecated_server_resource_name: 'NovaCompute'
+  deprecated_param_extraconfig: 'ComputeVirtExtraConfig'
+  deprecated_param_metadata: 'ComputeVirtServerMetadata'
+  deprecated_param_scheduler_hints: 'ComputeVirtSchedulerHints'
+  deprecated_param_ips: 'ComputeVirtIPs'
+  deprecated_server_resource_name: 'ComputeVirt'
   deprecated_nic_config_name: 'compute.yaml'
   update_serial: 25
   ServicesDefault:
@@ -292,7 +292,7 @@
       subnet: tenant_subnet
     Storage:
       subnet: storage_subnet
-  HostnameFormatDefault: '%stackname%-novacompute-%index%'
+  HostnameFormatDefault: '%stackname%-computemetal-%index%'
   RoleParametersDefault:
     TunedProfileName: "virtual-host"
   # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
@@ -301,11 +301,11 @@
   # composable roles.
   uses_deprecated_params: True
   deprecated_param_image: 'NovaImage'
-  deprecated_param_extraconfig: 'NovaComputeExtraConfig'
-  deprecated_param_metadata: 'NovaComputeServerMetadata'
-  deprecated_param_scheduler_hints: 'NovaComputeSchedulerHints'
-  deprecated_param_ips: 'NovaComputeIPs'
-  deprecated_server_resource_name: 'NovaCompute'
+  deprecated_param_extraconfig: 'ComputeVirtExtraConfig'
+  deprecated_param_metadata: 'ComputeVirtServerMetadata'
+  deprecated_param_scheduler_hints: 'ComputeVirtSchedulerHints'
+  deprecated_param_ips: 'ComputeVirtIPs'
+  deprecated_server_resource_name: 'ComputeVirt'
   deprecated_nic_config_name: 'compute.yaml'
   update_serial: 25
   ServicesDefault:
@@ -370,6 +370,7 @@
       subnet: tenant_subnet
     Storage:
       subnet: storage_subnet
+  HostnameFormatDefault: '%stackname%-computsriovemetal-%index%'
   RoleParametersDefault:
     TunedProfileName: "cpu-partitioning"
   update_serial: 25
