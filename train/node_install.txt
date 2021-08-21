@@ -147,6 +147,7 @@ sudo -E tripleo-repos -b train current
 sudo yum install -y python3-tripleoclient (For Undercloud Nodes)
 or...
 sudo yum install -y python3-heat-agent*  (For Overcloud Nodes)
+sudo yum install tuned-profiles-cpu-partitioning (For SRIOV Nodes)
 sudo sed -e 's/domain4/domain4 computemetal5-sriov.pdsea.f5net.com computemetal5-sriov/' -i /etc/hosts
 sudo sed -e 's/domain6/domain6 computemetal5-sriov.pdsea.f5net.com computemetal5-sriov/' -i /etc/hosts
 sudo reboot

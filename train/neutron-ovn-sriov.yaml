@@ -20,8 +20,8 @@ parameter_defaults:
   #   OVNCMSOptions: "enable-chassis-as-gw"
   NovaPCIPassthrough:
     - devname: "ens3f0"
-      physical_network: "provider"
+      physical_network: "float"
       trusted: "true"
     - devname: "ens3f1"
-      physical_network: "provider"
+      physical_network: "float"
       trusted: "true"
