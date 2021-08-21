@@ -158,8 +158,8 @@ parameter_defaults:
       - float:ens3f0
       - float:ens3f1
     NeutronSriovNumVFs:
-      - ens3f0:32
-      - ens3f1:32
+      - ens3f0:8
+      - ens3f1:8
     NovaVcpuPinSet: '1-15,17-31,33-47,49-63'
     NovaReservedHostMemory: 8192
   ComputeVirtExtraConfig:        
