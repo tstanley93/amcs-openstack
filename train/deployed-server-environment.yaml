@@ -178,5 +178,5 @@ parameter_defaults:
   ControllerCount: 3
   ComputeVirtCount: 1
   ComputeMetalCount: 0
-  ComputeSriovMetalCount: 0
+  ComputeSriovMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
