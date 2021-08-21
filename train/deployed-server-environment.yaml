@@ -74,7 +74,7 @@ parameter_defaults:
       network:
         tags:
           - 10.146.171.0/23
-    computesriovmetal0-ctlplane:
+    computemetal0-sriov-ctlplane:
       fixed_ips:
         - ip_address: 10.146.171.32
       subnets:
