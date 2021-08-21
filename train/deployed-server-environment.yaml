@@ -140,12 +140,11 @@ parameter_defaults:
   # NeutronTunnelTypes: 'vxlan'
   NeutronBridgeMappings:
     - float:br-ex
-    - provider:br-ex
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronNetworkVLANRanges: 
     - float:10:10
-    - provider:100:109
-  NeutronFlatNetworks: "float,provider"
+    - float:100:109
+  NeutronFlatNetworks: "float"
   # NeutronExternalNetworkBridge: "''"
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
@@ -156,8 +155,8 @@ parameter_defaults:
     TunedProfileName: "cpu-partitioning"
     IsolCpusList: "1-15,17-31,33-47,49-63"    
     NeutronPhysicalDevMappings:
-      - provider:ens3f0
-      - provider:ens3f1
+      - float:ens3f0
+      - float:ens3f1
     NeutronSriovNumVFs:
       - ens3f0:32
       - ens3f0:32
