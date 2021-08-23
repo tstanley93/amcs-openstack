@@ -33,6 +33,11 @@ parameter_defaults:
     vnfcloud-computevirt-0: computevirt0
     vnfcloud-computemetal-0: computemetal0
     vnfcloud-computsriovemetal-0: computemetal0-sriov
+    vnfcloud-computsriovemetal-1: computemetal1-sriov
+    vnfcloud-computsriovemetal-2: computemetal2-sriov
+    vnfcloud-computsriovemetal-3: computemetal3-sriov
+    vnfcloud-computsriovemetal-4: computemetal4-sriov
+    vnfcloud-computsriovemetal-5: computemetal5-sriov
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
