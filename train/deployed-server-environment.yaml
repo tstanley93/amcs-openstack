@@ -82,8 +82,47 @@ parameter_defaults:
       network:
         tags:
           - 10.146.171.0/23
-  
-  
+    computemetal1-sriov-ctlplane:
+      fixed_ips:
+        - ip_address: 10.146.171.33
+      subnets:
+        - cidr: 10.146.171.0/23
+      network:
+        tags:
+          - 10.146.171.0/23
+    computemetal2-sriov-ctlplane:
+      fixed_ips:
+        - ip_address: 10.146.171.34
+      subnets:
+        - cidr: 10.146.171.0/23
+      network:
+        tags:
+          - 10.146.171.0/23
+    computemetal3-sriov-ctlplane:
+      fixed_ips:
+        - ip_address: 10.146.171.35
+      subnets:
+        - cidr: 10.146.171.0/23
+      network:
+        tags:
+          - 10.146.171.0/23      
+    computemetal4-sriov-ctlplane:
+      fixed_ips:
+        - ip_address: 10.146.171.36
+      subnets:
+        - cidr: 10.146.171.0/23
+      network:
+        tags:
+          - 10.146.171.0/23
+    computemetal5-sriov-ctlplane:
+      fixed_ips:
+        - ip_address: 10.146.171.37
+      subnets:
+        - cidr: 10.146.171.0/23
+      network:
+        tags:
+          - 10.146.171.0/23
+       
   # This section is where deployment-specific configuration is done
   #
   # NOTE: (Since Rocky)
@@ -179,5 +218,5 @@ parameter_defaults:
   ControllerCount: 3
   ComputeVirtCount: 1
   ComputeMetalCount: 0
-  ComputeSriovMetalCount: 1
+  ComputeSriovMetalCount: 6
   NetworkDeploymentActions: ['CREATE','UPDATE']
