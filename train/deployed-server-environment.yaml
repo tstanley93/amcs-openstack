@@ -148,7 +148,8 @@ parameter_defaults:
   # NeutronExternalNetworkBridge: "''"
   # Customize bonding options, e.g. "mode=4 lacp_rate=1 updelay=1000 miimon=100"
   # for Linux bonds w/LACP, or "bond_mode=active-backup" for OVS active/backup.
-  BondInterfaceOvsOptions: "bond_mode=balance-slb lacp=off"
+  # BondInterfaceOvsOptions: "bond_mode=balance-slb lacp=off"
+  BondInterfaceOvsOptions: "lacp=active bond_mode=active-backup"
   # These settings are specific to our Dell Servers for SR-IOV
   ComputeSriovMetalParameters:
     KernelArgs: "intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=512 isolcpus=1-15,17-31,33-47,49-63"
