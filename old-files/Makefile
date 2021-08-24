@@ -31,3 +31,18 @@ destroy:
 	source ~/stackrc && openstack overcloud plan delete overcloud
 	source ~/stackrc && swift delete overcloud-swift-rings
 	source ~/stackrc && openstack stack list
+
+deploy:
+	@echo "deploying overcloud..."
+	openstack overcloud deploy \
+		--update-plan-only \
+		--templates \
+		-e /usr/share/openstack-tripleo-heat-templates/environments/network-isolation.yaml \
+		-e ~/templates/network-environment.yaml \
+		-e ~/templates/vnf.yaml \
+		--timeout 3600 \
+		--ntp-server time.google.com
+
+remove_compute:
+	@echo "removing compute nodes..."
+	openstack 

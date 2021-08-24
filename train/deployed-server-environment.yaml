@@ -32,6 +32,7 @@ parameter_defaults:
     vnfcloud-controller-2: controller2
     vnfcloud-computevirt-0: computevirt0
     vnfcloud-computemetal-0: computemetal0
+    vnfcloud-computemetal-1: computemetal1
     vnfcloud-computsriovemetal-0: computemetal0-sriov
     vnfcloud-computsriovemetal-1: computemetal1-sriov
     vnfcloud-computsriovemetal-2: computemetal2-sriov
@@ -73,7 +74,15 @@ parameter_defaults:
           - 10.146.171.0/23
     computemetal0-ctlplane:
       fixed_ips:
-        - ip_address: 10.146.171.91
+        - ip_address: 10.146.171.18
+      subnets:
+        - cidr: 10.146.171.0/23
+      network:
+        tags:
+          - 10.146.171.0/23
+    computemetal1-ctlplane:
+      fixed_ips:
+        - ip_address: 10.146.171.19
       subnets:
         - cidr: 10.146.171.0/23
       network:
@@ -128,6 +137,7 @@ parameter_defaults:
         tags:
           - 10.146.171.0/23
        
+  
   # This section is where deployment-specific configuration is done
   #
   # NOTE: (Since Rocky)
@@ -222,6 +232,6 @@ parameter_defaults:
   TimeZone: 'America/Los_Angeles'
   ControllerCount: 3
   ComputeVirtCount: 1
-  ComputeMetalCount: 0
+  ComputeMetalCount: 2
   ComputeSriovMetalCount: 6
   NetworkDeploymentActions: ['CREATE','UPDATE']

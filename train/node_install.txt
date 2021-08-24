@@ -147,9 +147,9 @@ sudo -E tripleo-repos -b train current
 sudo yum install -y python3-tripleoclient (For Undercloud Nodes)
 or...
 sudo yum install -y python3-heat-agent*  (For Overcloud Nodes)
-sudo yum install tuned-profiles-cpu-partitioning (For SRIOV Nodes)
-sudo sed -e 's/domain4/domain4 computemetal5-sriov.pdsea.f5net.com computemetal5-sriov/' -i /etc/hosts
-sudo sed -e 's/domain6/domain6 computemetal5-sriov.pdsea.f5net.com computemetal5-sriov/' -i /etc/hosts
+sudo yum install -y tuned-profiles-cpu-partitioning (For SRIOV Nodes)
+sudo sed -e 's/domain4/domain4 computemetal1.pdsea.f5net.com computemetal1/' -i /etc/hosts
+sudo sed -e 's/domain6/domain6 computemetal1.pdsea.f5net.com computemetal1/' -i /etc/hosts
 sudo reboot
 
 openstack tripleo container image prepare default \
@@ -168,7 +168,8 @@ sudo cp os16dir.pdsea.f5net.com.pem /etc/pki/instack-certs
 sudo semanage fcontext -a -t etc_t "/etc/pki/instack-certs(/.*)?"
 sudo restorecon -R /etc/pki/instack-certs
 
-ssh stack@10.146.171.32 "sudo mv /home/stack/ca.pem /etc/pki/ca-trust/source/anchors/ca.pem && sudo update-ca-trust extract"
+scp /home/topduck/certs/ca.pem stack@10.146.171.18:~/
+ssh stack@10.146.171.18 "sudo mv /home/stack/ca.pem /etc/pki/ca-trust/source/anchors/ca.pem && sudo update-ca-trust extract"
 
 openstack undercloud install 
 
