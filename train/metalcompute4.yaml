@@ -149,10 +149,10 @@ resources:
                     get_param: BondInterfaceOvsOptions
                   members:
                   - type: interface
-                    name: ens1f0
+                    name: enp5s0f0
                     primary: true
                   - type: interface
-                    name: ens1f1
+                    name: enp5s0f1
                 - type: vlan
                   vlan_id:
                     get_param: StorageNetworkVlanID
