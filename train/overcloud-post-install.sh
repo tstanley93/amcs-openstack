@@ -288,47 +288,47 @@ openstack flavor create m1.small --ram 2048 --disk 20 --vcpus 1
 openstack flavor set --property aggregate_instance_extra_specs:regular=true m1.small
 openstack flavor create m1.medium --ram 4096 --disk 20 --vcpus 2
 openstack flavor set --property aggregate_instance_extra_specs:regular=true m1.medium
-openstack flavor create m1.large --ram 8192 --disk 40 --vcpus 4
-openstack flavor set --property aggregate_instance_extra_specs:regular=true m1.large
-openstack flavor create m1.xlarge --ram 16384 --disk 60 --vcpus 8
-openstack flavor set --property aggregate_instance_extra_specs:regular=true m1.xlarge
-openstack flavor create m1.xxlarge --ram 16384 --disk 60 --vcpus 16
-openstack flavor set --property aggregate_instance_extra_specs:regular=true m1.xxlarge
-openstack flavor create m1.xxxlarge --ram 16384 --disk 160 --vcpus 24
-openstack flavor set --property aggregate_instance_extra_specs:regular=true m1.xxxlarge
+flavor create m1.large --ram 8192 --disk 40 --vcpus 4
+flavor set --property aggregate_instance_extra_specs:regular=true m1.large
+flavor create m1.xlarge --ram 16384 --disk 60 --vcpus 8
+flavor set --property aggregate_instance_extra_specs:regular=true m1.xlarge
+flavor create m1.xxlarge --ram 16384 --disk 60 --vcpus 16
+flavor set --property aggregate_instance_extra_specs:regular=true m1.xxlarge
+flavor create m1.xxxlarge --ram 16384 --disk 160 --vcpus 24
+flavor set --property aggregate_instance_extra_specs:regular=true m1.xxxlarge
 
 ### m2 - Flavors that have disk big enough for BIG-IQ and BIG-IP
-openstack flavor create m2.medium --ram 4096 --disk 160 --vcpus 2
-openstack flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.medium
-openstack flavor create m2.large --ram 8192 --disk 160 --vcpus 4
-openstack flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.large
-openstack flavor create m2.xlarge --ram 16384 --disk 160 --vcpus 8
-openstack flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.xlarge
-openstack flavor create m2.xxlarge --ram 16384 --disk 160 --vcpus 16
-openstack flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.xxlarge
+flavor create m2.medium --ram 4096 --disk 160 --vcpus 2
+flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.medium
+flavor create m2.large --ram 8192 --disk 160 --vcpus 4
+flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.large
+flavor create m2.xlarge --ram 16384 --disk 160 --vcpus 8
+flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.xlarge
+flavor create m2.xxlarge --ram 16384 --disk 160 --vcpus 16
+flavor set --property aggregate_instance_extra_specs:sriov=false --property aggregate_instance_extra_specs:dpdk=false m2.xxlarge
 ### m3 - Flavors that are setup for SRI-OV
-openstack flavor create m3.large.sriov --ram 8192 --disk 160 --vcpus 4
-openstack flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.large.sriov
-openstack flavor create m3.xlarge.sriov --ram 16384 --disk 160 --vcpus 8
-openstack flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.xlarge.sriov
-openstack flavor create m3.xxlarge.sriov --ram 16384 --disk 160 --vcpus 16
-openstack flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.xxlarge.sriov
-openstack flavor create m3.xxxlarge.sriov --ram 16384 --disk 160 --vcpus 24
-openstack flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.xxxlarge.sriov
+flavor create m3.large.sriov --ram 8192 --disk 160 --vcpus 4
+flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.large.sriov
+flavor create m3.xlarge.sriov --ram 16384 --disk 160 --vcpus 8
+flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.xlarge.sriov
+flavor create m3.xxlarge.sriov --ram 16384 --disk 160 --vcpus 16
+flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.xxlarge.sriov
+flavor create m3.xxxlarge.sriov --ram 16384 --disk 160 --vcpus 24
+flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:cpu_thread_policy=prefer --property hw:mem_page_size=any --property hw:numa_nodes=1 m3.xxxlarge.sriov
 ### m4 - Flavors that are setup for DPDK
-openstack flavor create m4.large.dpdk --ram 8192 --disk 160 --vcpus 4
-openstack flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.large.dpdk
-openstack flavor create m4.xlarge.dpdk --ram 16384 --disk 160 --vcpus 8
-openstack flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.xlarge.dpdk
-openstack flavor create m4.xxlarge.dpdk --ram 16384 --disk 160 --vcpus 16
-openstack flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.xxlarge.dpdk
-openstack flavor create m4.xxxlarge.dpdk --ram 16384 --disk 160 --vcpus 24
-openstack flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.xxxlarge.dpdk
+flavor create m4.large.dpdk --ram 8192 --disk 160 --vcpus 4
+flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.large.dpdk
+flavor create m4.xlarge.dpdk --ram 16384 --disk 160 --vcpus 8
+flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.xlarge.dpdk
+flavor create m4.xxlarge.dpdk --ram 16384 --disk 160 --vcpus 16
+flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.xxlarge.dpdk
+flavor create m4.xxxlarge.dpdk --ram 16384 --disk 160 --vcpus 24
+flavor set --property aggregate_instance_extra_specs:dpdk=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m4.xxxlarge.dpdk
 ### m5 - Huge flavor
-openstack flavor create m5.xxxlarge.sriov --ram 32768 --disk 160 --vcpus 24
-openstack flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m5.xxxlarge.sriov
-openstack flavor create m6.xlarge.sfr --ram 8192 --disk 160 --vcpus 8
-openstack flavor set --property aggregate_instance_extra_specs:sfr=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=any --property hw:cpu_thread_policy=prefer --property hw:numa_nodes=1 m6.xlarge.sfr
+flavor create m5.xxxlarge.sriov --ram 32768 --disk 160 --vcpus 24
+flavor set --property aggregate_instance_extra_specs:sriov=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=large m5.xxxlarge.sriov
+flavor create m6.xlarge.sfr --ram 8192 --disk 160 --vcpus 8
+flavor set --property aggregate_instance_extra_specs:sfr=true --property hw:cpu_policy=dedicated --property hw:mem_page_size=any --property hw:cpu_thread_policy=prefer --property hw:numa_nodes=1 m6.xlarge.sfr
 
 noLog "INFO -------------------------------------------------------------"
 noLog "INFO Waiting 5 Seconds"
@@ -346,22 +346,22 @@ noLog "INFO -------------------------------------------------------------"
 noLog "INFO -------------------------------------------------------------"
 noLog "INFO Creating base networks"
 noLog "INFO -------------------------------------------------------------"
-openstack network create public --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 10
-openstack network create pdn_ex --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 91
-openstack network create pgw_ex --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 90
-openstack network create pdn_dag_net_ex --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 100
-openstack network create pgw_dag_net_ex --external --provider-network-type vlan --provider-physical-network provider --share --provider-segment 99
-openstack network create mgmt_ts --provider-network-type vxlan
+openstack network create public --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 92
+openstack network create pdn_ex --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 103
+openstack network create pgw_ex --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 102
+openstack network create pdn_dag_net_ex --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 105
+openstack network create pgw_dag_net_ex --external --provider-network-type vlan --provider-physical-network float --share --provider-segment 104
+openstack network create mgmt_ts
  
 ## Configure subnets
 noLog "INFO -------------------------------------------------------------"
 noLog "INFO Creating Subnets"
 noLog "INFO -------------------------------------------------------------"
-openstack subnet create public --network public --dhcp --allocation-pool start=10.144.184.66,end=10.144.184.100 --gateway 10.144.187.254 --subnet-range 10.144.184.0/22
-openstack subnet create pdn_ex --network pdn_ex --subnet-range 192.168.4.0/23 --dhcp --allocation-pool start=192.168.4.76,end=192.168.4.100
-openstack subnet create pgw_ex --network pgw_ex --subnet-range 192.168.2.0/23 --dhcp --allocation-pool start=192.168.2.76,end=192.168.2.100
-openstack subnet create pdn_dag_net_ex --network pdn_dag_net_ex --subnet-range 192.168.12.0/23 --dhcp --allocation-pool start=192.168.12.76,end=192.168.12.100
-openstack subnet create pgw_dag_net_ex --network pgw_dag_net_ex --subnet-range 192.168.10.0/23 --dhcp --allocation-pool start=192.168.10.76,end=192.168.10.100
+openstack subnet create public --network public --dhcp --allocation-pool start=10.146.172.101,end=10.146.173.250 --gateway 10.146.173.254 --subnet-range 10.146.172.0/23
+openstack subnet create pdn_ex --network pdn_ex --subnet-range 192.168.6.0/24 --dhcp --allocation-pool start=192.168.6.80,end=192.168.6.100
+openstack subnet create pgw_ex --network pgw_ex --subnet-range 192.168.5.0/24 --dhcp --allocation-pool start=192.168.5.80,end=192.168.5.100
+openstack subnet create pdn_dag_net_ex --network pdn_dag_net_ex --subnet-range 192.168.8.0/24 --dhcp --allocation-pool start=192.168.8.80,end=192.168.8.100
+openstack subnet create pgw_dag_net_ex --network pgw_dag_net_ex --subnet-range 192.168.7.0/24 --dhcp --allocation-pool start=192.168.7.80,end=192.168.7.100
 openstack subnet create mgmt_ts --network mgmt_ts --gateway 10.10.2.1 --subnet-range 10.10.2.0/24 --dhcp --allocation-pool start=10.10.2.5,end=10.10.2.254
 openstack subnet set mgmt_ts --dns-nameserver 172.27.1.1
 openstack subnet set mgmt_ts --dns-nameserver 172.27.2.1 
@@ -382,7 +382,7 @@ noLog "INFO -------------------------------------------------------------"
 noLog "INFO -------------------------------------------------------------"
 noLog "INFO Creating the External Router"
 noLog "INFO -------------------------------------------------------------"
-openstack router create router --no-ha
+openstack router create router
 openstack router set router --external-gateway public
 openstack router add subnet router mgmt_ts
 
