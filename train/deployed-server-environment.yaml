@@ -196,7 +196,7 @@ parameter_defaults:
     - float:br-ex
   # Neutron VLAN ranges per network, for example 'datacentre:1:499,tenant:500:1000':
   NeutronNetworkVLANRanges: 
-    - float:10:10
+    - float:92:92
     - float:100:109
   NeutronFlatNetworks: "float"
   # NeutronExternalNetworkBridge: "''"
