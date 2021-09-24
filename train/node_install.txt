@@ -139,9 +139,9 @@ chmod 0440 /etc/sudoers.d/stack
 exit
 sudo yum -y update
 sudo yum install -y nfs-utils
-sudo yum install -y epel-release
+# sudo yum install -y epel-release
 sudo yum install -y git tcpdump open-vm-tools rsyslog
-sudo yum remove -y epel-release
+# sudo yum remove -y epel-release
 sudo dnf install -y https://trunk.rdoproject.org/centos8/component/tripleo/current/python3-tripleo-repos-0.1.1-0.20210817121802.041c6d5.el8.noarch.rpm
 sudo -E tripleo-repos -b train current
 sudo yum install -y python3-tripleoclient (For Undercloud Nodes)
@@ -232,4 +232,11 @@ echo "IPADDR=10.10.6.10" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "NETMASK=255.255.254.0" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 echo "GATEWAY=10.10.6.25" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-eth0
 sudo reboot
+#####################################################################
+
+#####################################################################
+### Updating Repos ##################################################
+#####################################################################
+sudo sed -e 's|https://trunk.rdoproject.org/centos8-train/component/cinder/9c/77/9c770d97494c786f9f416f6e7096960a58be90c6_6cb48442||' -i /etc/yum.repos.d/delorean.repo
+sudo sed -e 's|9c770d97494c786f9f416f6e7096960a58be90c6||' -i /etc/yum.repos.d/delorean.repo
 #####################################################################
