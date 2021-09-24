@@ -34,7 +34,7 @@ parameter_defaults:
   #### CINDER NFS SETTINGS ####
 
   ## NFS mount options
-  CinderNfsMountOptions: 'intr,context=system_u:object_r:glance_var_lib_t:s0'
+  CinderNfsMountOptions: 'context=system_u:object_r:nfs_t:s0'
   ## NFS mount point, e.g. '192.168.122.1:/export/cinder'
   CinderNfsServers: '10.146.130.52:/mnt/nfvnas01/openstack/cinder'
 
