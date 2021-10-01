@@ -52,7 +52,7 @@ parameter_defaults:
   GlanceNfsShare: '10.146.130.52:/mnt/nfvnas01/openstack/glance'
   ## Mount options for the NFS image storage mount point
   # GlanceNfsOptions: 'intr,context=system_u:object_r:svirt_sandbox_file_t:s0'
-  GlanceNfsOptions: 'intr,context=system_u:object_r:glance_var_lib_t:s0'
+  GlanceNfsOptions: 'context=system_u:object_r:glance_var_lib_t:s0'
 
 
   #### NOVA NFS SETTINGS ####
