@@ -242,3 +242,9 @@ cd /var/lib/mistral/vnfcloud/
 ansible Controller:ComputeVirt:ComputeMetal:ComputeSriovMetal -i /var/lib/mistral/vnfcloud/tripleo-ansible-inventory.yaml -b -m shell -a "sed -e 's|https://trunk.rdoproject.org/centos8-train/component/validation/83/65/8365aa780ae380a5ff275c8ac993ad7502d7120f_a9b76eb5|https://trunk.rdoproject.org/centos8-train/component/validation/44/89/4489fee138cb10222508b512d22fd50748859f2f_a9b76eb5|' -i /etc/yum.repos.d/delorean.repo"
 ansible Controller:ComputeVirt:ComputeMetal:ComputeSriovMetal -i /var/lib/mistral/vnfcloud/tripleo-ansible-inventory.yaml -b -m shell -a "sed -e 's|8365aa780ae380a5ff275c8ac993ad7502d7120f|4489fee138cb10222508b512d22fd50748859f2f|' -i /etc/yum.repos.d/delorean.repo"
 #####################################################################
+
+fdisk /dev/vdb
+n,p,d,w
+mkfs.ext4 /dev/vdb1
+mount /dev/vdb1 /tmpsas
+echo "/dev/vdb1 /tmpsas ext4 defaults 0 0" | tee -a /etc/fstab
