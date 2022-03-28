@@ -88,7 +88,7 @@ parameter_defaults:
   ComputeMetalIPs:
     # Each compute will get an IP from the lists below, first computevirt, first IP
     internal_api:
-    - 10.92.1.129
+    - 10.92.1.129 # m-d-r640-03.splab.pdsea.f5net.com
     storage:
     - 10.12.0.93
     tenant:
