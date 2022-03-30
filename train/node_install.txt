@@ -181,6 +181,8 @@ sudo dnf module enable -y container-tools:3.0
 sudo dnf update -y
 sudo reboot
 
+sudo scp stack@192.168.60.11:~/amcs-openstack/train/ca.pem /etc/pki/ca-trust/source/anchors/
+sudo update-ca-trust extract
 
 #####  Networks
 Controller:

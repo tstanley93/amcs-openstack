@@ -131,7 +131,7 @@ resources:
             $network_config:
               network_config:
               - type: interface
-                name: ens224
+                name: ens193
                 mtu:
                   get_param: StorageMtu
                 use_dhcp: false
@@ -142,7 +142,7 @@ resources:
                   list_concat_unique:
                     - get_param: StorageInterfaceRoutes
               - type: interface
-                name: ens193
+                name: ens161
                 mtu:
                   get_param: InternalApiMtu
                 use_dhcp: false
@@ -181,7 +181,7 @@ resources:
                 use_dhcp: false
                 members:
                 - type: interface
-                  name: ens161
+                  name: ens224
                   mtu:
                     get_param: ExternalMtu
                   use_dhcp: false
