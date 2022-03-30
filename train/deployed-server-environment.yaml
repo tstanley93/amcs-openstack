@@ -19,17 +19,17 @@ resource_registry:
 
 parameter_defaults:
   # NeutronOVSFirewallDriver: noop
-  CloudDomain: amcs.com
+  CloudDomain: splab.pdsea.f5net.com
   EnablePackageInstall: True
-  NeutronPublicInterface: ens224
+  NeutronPublicInterface: ens192
   ControlPlaneDefaultRoute: 192.168.60.11
   # EC2MetadataIp: 192.168.60.25
   HostnameMap:
-    thomas07-controller-0: controller0
-    thomas07-controller-1: controller1
-    thomas07-controller-2: controller2
-    thomas07-computevirt-0: computevirt0
-    thomas07-computemetal-0: computemetal0
+    thomas01-controller-0: controller1601
+    thomas01-controller-1: controller1602
+    thomas01-controller-2: controller1603
+    thomas01-computevirt-0: computevirt1601
+    thomas01-computemetal-0: computemetal1601
   DeployedServerPortMap:
     controller0-ctlplane:
       fixed_ips:
