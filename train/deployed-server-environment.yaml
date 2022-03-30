@@ -31,7 +31,7 @@ parameter_defaults:
     thomas01-computevirt-0: computevirt1601
     thomas01-computemetal-0: computemetal1601
   DeployedServerPortMap:
-    controller0-ctlplane:
+    controller1601-ctlplane:
       fixed_ips:
         - ip_address: 192.168.60.85
       subnets:
@@ -39,7 +39,7 @@ parameter_defaults:
       network:
         tags:
           - 192.168.60.0/24
-    controller1-ctlplane:
+    controller1602-ctlplane:
       fixed_ips:
         - ip_address: 192.168.60.87
       subnets:
@@ -47,7 +47,7 @@ parameter_defaults:
       network:
         tags:
           - 192.168.60.0/24
-    controller2-ctlplane:
+    controller1603-ctlplane:
       fixed_ips:
         - ip_address: 192.168.60.88
       subnets:
@@ -55,7 +55,7 @@ parameter_defaults:
       network:
         tags:
           - 192.168.60.0/24
-    computevirt0-ctlplane:
+    computevirt1601-ctlplane:
       fixed_ips:
         - ip_address: 192.168.60.86
       subnets:
@@ -63,7 +63,7 @@ parameter_defaults:
       network:
         tags:
           - 192.168.60.0/24
-    computemetal0-ctlplane: # m-d-r640-03.splab.pdsea.f5net.com
+    computemetal1601-ctlplane: # m-d-r640-03.splab.pdsea.f5net.com
       fixed_ips:
         - ip_address: 192.168.60.91
       subnets:
