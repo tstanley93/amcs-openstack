@@ -25,11 +25,11 @@ parameter_defaults:
   ControlPlaneDefaultRoute: 192.168.60.11
   # EC2MetadataIp: 192.168.60.25
   HostnameMap:
-    thomas02-controller-0: controller1601
-    thomas02-controller-1: controller1602
-    thomas02-controller-2: controller1603
-    thomas02-computevirt-0: computevirt1601
-    thomas02-computemetal-0: computemetal1601
+    thomas03-controller-0: controller1601
+    thomas03-controller-1: controller1602
+    thomas03-controller-2: controller1603
+    thomas03-computevirt-0: computevirt1601
+    thomas03-computemetal-0: computemetal1601
   DeployedServerPortMap:
     controller1601-ctlplane:
       fixed_ips:
