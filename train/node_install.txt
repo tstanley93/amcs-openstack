@@ -164,6 +164,10 @@ ln -s /home/stack/amcs-openstack/train/ ~/templates
 openstack undercloud install 
 
 ###############  Redhat Install
+sudo su -
+echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack
+chmod 0440 /etc/sudoers.d/stack
+exit
 sudo subscription-manager register
 sudo subscription-manager list --available --all --matches="Red Hat OpenStack"
 sudo subscription-manager attach --pool=8a85f99f7a34a77c017a546f1cf00e02
@@ -180,10 +184,10 @@ sudo dnf module disable -y container-tools:rhel8
 sudo dnf module enable -y container-tools:3.0
 sudo dnf update -y
 sudo dnf install -y nfs-utils
-sudo reboot
-
 sudo scp stack@192.168.60.11:~/amcs-openstack/train/ca.pem /etc/pki/ca-trust/source/anchors/
 sudo update-ca-trust extract
+sudo reboot
+
 
 #####  Networks
 Controller:
