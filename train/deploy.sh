@@ -264,6 +264,7 @@ noLog "INFO Starting OverCloud Deployment or Update..."
 noLog "INFO -------------------------------------------------------------"
 
 openstack overcloud deploy \
+    -v \
     --answers-file /home/stack/templates/answers.yaml \
     -r /home/stack/templates/my_roles_data.yaml \
     -n /home/stack/templates/network_data.yaml \

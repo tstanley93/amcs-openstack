@@ -25,7 +25,7 @@ parameter_defaults:
   ## Whether to enable rbd (Ceph) backend for Nova ephemeral storage.
   NovaEnableRbdBackend: false
   ## Glance backend can be either 'rbd' (Ceph), 'swift' or 'file'.
-  GlanceBackend: 'file'
+  GlanceBackend: file
   ## Gnocchi backend can be either 'rbd' (Ceph), 'swift' or 'file'.
   ## Uncomment below if enabling legacy telemetry
   # GnocchiBackend: rbd
@@ -51,7 +51,8 @@ parameter_defaults:
   GlanceNfsShare: '10.12.0.13:/i-nfs-1/virt/glance'
   ## Mount options for the NFS image storage mount point
   # GlanceNfsOptions: 'intr,context=system_u:object_r:svirt_sandbox_file_t:s0'
-  GlanceNfsOptions: 'intr,context=system_u:object_r:glance_var_lib_t:s0'
+  # GlanceNfsOptions: 'intr,context=system_u:object_r:glance_var_lib_t:s0'
+  GlanceNfsOptions: 'vers=3,context=system_u:object_r:container_file_t:s0'
 
 
   #### NOVA NFS SETTINGS ####
