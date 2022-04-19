@@ -1,0 +1,46 @@
+#####################################################################
+#####################  Generate Certs on Laptop   ###################
+#####################################################################
+
+###  Generate private key
+openssl genrsa -out ~/certs/os16.amcs.com.key.pem 2048
+
+###  Create registry.splab.pdsea.f5net.com.cnf
+cp ~/certs/registry.splab.pdsea.f5net.com.cnf ~/certs/os16.amcs.com.cnf
+
+###  Edit the .cnf
+vi ~/certs/os16.amcs.com.cnf
+
+### Generate the server cert signing request
+openssl req \
+-sha256 \
+-new \
+-key ~/certs/os16.amcs.com.key.pem \
+-config ~/certs/os16.amcs.com.cnf \
+-out ~/certs/os16.amcs.com.csr
+
+### Verify the CSR
+openssl req -text -noout -verify -in ~/certs/os16.amcs.com.csr
+
+### Generate the server certificate
+openssl \
+x509 \
+-req \
+-extensions v3_req \
+-days 3650 \
+-sha256 \
+-in ~/certs/os16.amcs.com.csr \
+-CA ~/certs/ca.pem \
+-CAkey ~/certs/ca.key.pem \
+-CAcreateserial \
+-out ~/certs/os16.amcs.com.crt \
+-extfile ~/certs/os16.amcs.com.cnf
+
+### Verify the Certificate
+openssl x509 -in ~/certs/os16.amcs.com.crt -text -noout
+
+#### Combine Cert and Key
+cat ~/certs/os16.amcs.com.crt ~/certs/os16.amcs.com.key.pem > ~/certs/os16.amcs.com.pem
+
+### Check Server
+echo quit | openssl s_client -showcerts -connect 10.0.0.128:443
