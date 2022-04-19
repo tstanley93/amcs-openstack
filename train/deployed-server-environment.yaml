@@ -29,7 +29,8 @@ parameter_defaults:
     thomas03-controller-1: controller1602
     thomas03-controller-2: controller1603
     thomas03-computevirt-0: computevirt1601
-    thomas03-computemetal-0: computemetal1601
+    # thomas03-computemetal-0: computemetal1601
+    thomas03-computemetal-1: computemetal1602
   DeployedServerPortMap:
     controller1601-ctlplane:
       fixed_ips:
@@ -63,9 +64,17 @@ parameter_defaults:
       network:
         tags:
           - 192.168.60.0/24
-    computemetal1601-ctlplane: # m-d-r640-03.splab.pdsea.f5net.com
+    computemetal1601-ctlplane: # m-d-r640-3.splab.pdsea.f5net.com
       fixed_ips:
         - ip_address: 192.168.60.91
+      subnets:
+        - cidr: 192.168.60.0/24
+      network:
+        tags:
+          - 192.168.60.0/24
+    computemetal1602-ctlplane: # m-d-r640-4.splab.pdsea.f5net.com
+      fixed_ips:
+        - ip_address: 192.168.60.92
       subnets:
         - cidr: 192.168.60.0/24
       network:
@@ -116,7 +125,7 @@ parameter_defaults:
   # Customize the IP subnet to match the local environment
   ManagementNetCidr: '192.168.60.0/24'
   # Customize the IP range to use for static IPs and VIPs
-  ManagementAllocationPools: [{'start': '192.168.60.240', 'end': '192.168.60.250'}]
+  ManagementAllocationPools: [{'start': '192.168.60.85', 'end': '192.168.60.95'}]
   # Gateway router for routable networks
   ManagementInterfaceDefaultRoute: '192.168.60.11'
   # Customize the VLAN ID to match the local environment
