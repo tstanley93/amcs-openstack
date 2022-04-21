@@ -35,9 +35,9 @@ parameter_defaults:
 
   ## NFS mount options
   # CinderNfsMountOptions: 'rw,sync'
-  CinderNfsMountOptions: 'context=system_u:object_r:nfs_t:s0'
+  # CinderNfsMountOptions: 'context=system_u:object_r:nfs_t:s0'
   ## NFS mount point, e.g. '192.168.122.1:/export/cinder'
-  CinderNfsServers: '10.12.0.13:/i-nfs-1/virt/cinder'
+  CinderNfsServers: '10.12.0.13:/i-nfs-1/virt/cinder2'
 
 
   #### GLANCE NFS SETTINGS ####

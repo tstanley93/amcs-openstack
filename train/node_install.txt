@@ -170,7 +170,7 @@ chmod 0440 /etc/sudoers.d/stack
 exit
 sudo subscription-manager register  ## sudo subscription-manager register --consumerid=d530b671-49e9-4437-a619-8db5a3a76d4e
 sudo subscription-manager list --available --all --matches="Red Hat OpenStack"
-sudo subscription-manager attach --pool=8a85f99f7a34a77c017a546f1cf00e02
+sudo subscription-manager attach --pool=8a85f99f7a34a77c017a546f1c260e00
 sudo subscription-manager repos --disable=*
 sudo subscription-manager repos \
 --enable=rhel-8-for-x86_64-baseos-rpms \
