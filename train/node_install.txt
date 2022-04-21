@@ -168,7 +168,7 @@ sudo su -
 echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack
 chmod 0440 /etc/sudoers.d/stack
 exit
-sudo subscription-manager register
+sudo subscription-manager register  ## sudo subscription-manager register --consumerid=d530b671-49e9-4437-a619-8db5a3a76d4e
 sudo subscription-manager list --available --all --matches="Red Hat OpenStack"
 sudo subscription-manager attach --pool=8a85f99f7a34a77c017a546f1cf00e02
 sudo subscription-manager repos --disable=*
@@ -179,6 +179,14 @@ sudo subscription-manager repos \
 --enable=ansible-2.9-for-rhel-8-x86_64-rpms \
 --enable=openstack-beta-for-rhel-8-x86_64-rpms \
 --enable=fast-datapath-for-rhel-8-x86_64-rpms
+
+--enable=ubi-7 
+--enablerepo=ubi-7-rhah 
+--enablerepo=ubi-7-server-optional-rpms 
+--enablerepo=ubi-7-server-extras-rpms \
+--enablerepo=ubi-server-rhscl-7-rpms 
+--enablerepo=updates
+
 
 sudo dnf module disable -y container-tools:rhel8
 sudo dnf module enable -y container-tools:3.0

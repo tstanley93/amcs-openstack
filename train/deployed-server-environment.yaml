@@ -148,5 +148,5 @@ parameter_defaults:
   TimeZone: 'America/Los_Angeles'
   ControllerCount: 3
   ComputeVirtCount: 1
-  ComputeMetalCount: 0
+  ComputeMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
