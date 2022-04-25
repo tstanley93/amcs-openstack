@@ -36,7 +36,7 @@ parameter_defaults:
   ## NFS mount options
   # CinderNfsMountOptions: 'context=system_u:object_r:container_file_t:s0'
   ## NFS mount point, e.g. '192.168.122.1:/export/cinder'
-  CinderNfsServers: '192.168.2.21:/mnt/pool1/cinder'
+  CinderNfsServers: '192.168.2.20:/mnt/pool1/cinder'
 
 
   #### GLANCE NFS SETTINGS ####
@@ -48,9 +48,9 @@ parameter_defaults:
   ## NFS share for image storage, e.g. '192.168.122.1:/export/glance'
   ## (If using IPv6, use both double- and single-quotes,
   ## e.g. "'[fdd0::1]:/export/glance'")
-  GlanceNfsShare: '192.168.2.21:/mnt/pool1/glance'
+  GlanceNfsShare: '192.168.2.20:/mnt/pool1/glance'
   ## Mount options for the NFS image storage mount point
-  GlanceNfsOptions: 'intr,context=system_u:object_r:glance_var_lib_t:s0'
+  GlanceNfsOptions: 'intr,context=system_u:object_r:container_file_t:s0'
 
 
   #### NOVA NFS SETTINGS ####
@@ -58,7 +58,7 @@ parameter_defaults:
   ## NFS share for nova instance file storage, e.g. '192.168.122.1:/export/nova'
   ## (If using IPv6, use both double and single-quotes,
   ## e.g. "'[fdd0::1]:/export/nova'")
-  NovaNfsShare: '192.168.2.21:/mnt/pool1/nova'
+  NovaNfsShare: '192.168.2.20:/mnt/pool1/nova'
   ## Mount options for the NFS instance file storage mount point
   NovaNfsOptions: 'context=system_u:object_r:nfs_t:s0'
   ## NFS version to be used to mount the NovaNfsShare. Default 4
