@@ -3,10 +3,12 @@ resource_registry:
   OS::TripleO::DeployedServer::ControlPlanePort: /usr/share/openstack-tripleo-heat-templates/deployed-server/deployed-neutron-port.yaml
   OS::TripleO::DeployedServer::Bootstrap: OS::Heat::None
 
-  # Network configuration assignments for the Controller
+  # Network configuration assignments for the Controller Role
   OS::TripleO::Controller::Net::SoftwareConfig: /home/stack/templates/virtcontroller4.yaml
-  # Network configuration assignments for the Compute
+  # Network configuration assignments for the ComputeVirt Role
   OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute4.yaml
+  # Network configuration assignments for the ComputeMetal Role
+  OS::TripleO::ComputeMetal::Net::SoftwareConfig: /home/stack/templates/metalcompute4.yaml
   # Network configuration assignments for the BlockStorage
   # OS::TripleO::BlockStorage::Net::SoftwareConfig: /usr/share/openstack-tripleo-heat-templates/network/config/multiple-nics-vlans/cinder-storage.yaml
   # Network configuration assignments for the ObjectStorage
@@ -27,6 +29,7 @@ parameter_defaults:
     thomas01-controller-1: os16controller02
     thomas01-controller-2: os16controller03
     thomas01-computevirt-0: os16computevirt01
+    thomas01-computemetal-0: os16computemetal01
   DeployedServerPortMap:
     os16controller01-ctlplane:
       fixed_ips:
@@ -55,6 +58,14 @@ parameter_defaults:
     os16computevirt01-ctlplane:
       fixed_ips:
         - ip_address: 192.168.50.36
+      subnets:
+        - cidr: 192.168.50.0/24
+      network:
+        tags:
+          - 192.168.50.0/24
+    os16computemetal01-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.50.37
       subnets:
         - cidr: 192.168.50.0/24
       network:
@@ -130,7 +141,13 @@ parameter_defaults:
     nova::disk_allocation_ratio: 4.0
   ComputeVirtSchedulerHints:
     'capabilities:profile': 'compute-%index%'
+  ComputeMetalExtraConfig:        
+    nova::disk_allocation_ratio: 4.0
+  ComputeMetalSchedulerHints:
+    'capabilities:profile': 'compute-%index%'
   TimeZone: 'America/Los_Angeles'
   ControllerCount: 3
   ComputeVirtCount: 1
+  ComputeMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
+  OvercloudComputeMetalFlavor: computemetal
