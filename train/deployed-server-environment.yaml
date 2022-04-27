@@ -150,4 +150,3 @@ parameter_defaults:
   ComputeVirtCount: 1
   ComputeMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
-  OvercloudComputeMetalFlavor: computemetal
