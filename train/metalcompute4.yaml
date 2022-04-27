@@ -113,7 +113,12 @@ parameters:
       guaranteed to pass through the data path of the segments in the
       External network.
     type: number
-
+  BondInterfaceOvsOptions:
+    default: bond_mode=active-backup
+    description: 'The ovs_options or bonding_options string for the bond
+      interface. Set things like lacp=active and/or bond_mode=balance-slb
+      for OVS bonds or like mode=4 for Linux bonds using this option.'
+    type: string
   DnsServers: # Override this via parameter_defaults
     default: []
     description: >
@@ -145,18 +150,13 @@ resources:
                   get_param: DnsServers
                 use_dhcp: false
                 members:
-                - type: ovs_bond
-                  name: bond1
-                  use_dhcp: true
-                  ovs_options:
-                    get_param: BondInterfaceOvsOptions
-                  members:
-                  - type: interface
-                    name: enp2s0
-                  - type: interface
-                    name: enp2sod1
+                - type: interface
+                  name: enp2sod1
+                  mtu:
+                    get_param: TenantMtu
+                  use_dhcp: false
+                  primary: true
                 - type: vlan
-                  device: br-ex
                   mtu:
                     get_param: TenantMtu
                   vlan_id:
@@ -168,7 +168,6 @@ resources:
                     list_concat_unique:
                       - get_param: TenantInterfaceRoutes
                 - type: vlan
-                  device: br-ex
                   mtu:
                     get_param: StorageMtu
                   vlan_id:
@@ -180,7 +179,6 @@ resources:
                     list_concat_unique:
                       - get_param: StorageInterfaceRoutes
                 - type: vlan
-                  device: br-ex
                   mtu:
                     get_param: InternalApiMtu
                   vlan_id:
@@ -192,14 +190,10 @@ resources:
                     list_concat_unique:
                       - get_param: InternalApiInterfaceRoutes
                 - type: vlan
-                  device: br-ex
                   mtu:
                     get_param: ExternalMtu
                   vlan_id:
                     get_param: ExternalNetworkVlanID
-                  addresses:
-                  - ip_netmask:
-                      get_param: ExternalIpSubnet
 outputs:
   OS::stack_id:
     description: The OsNetConfigImpl resource.
