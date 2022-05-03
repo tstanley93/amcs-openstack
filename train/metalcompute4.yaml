@@ -151,7 +151,7 @@ resources:
                 use_dhcp: false
                 members:
                 - type: interface
-                  name: enp2sod1
+                  name: enp2s0d1
                   mtu:
                     get_param: TenantMtu
                   use_dhcp: false
