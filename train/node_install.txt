@@ -166,9 +166,9 @@ sudo su -
 echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack
 chmod 0440 /etc/sudoers.d/stack
 exit
-sudo subscription-manager register
+sudo subscription-manager register --force --consumerid=fdbd3eae-c86f-4180-b168-3b97d226d38a
 sudo subscription-manager list --available --all --matches="Red Hat OpenStack"
-sudo subscription-manager attach --pool=8a85f99f7a34a77c017a546f1cf00e02
+sudo subscription-manager attach --pool= <poolID>
 sudo subscription-manager repos --disable=*
 sudo subscription-manager repos \
 --enable=rhel-8-for-x86_64-baseos-rpms \
@@ -182,7 +182,7 @@ sudo dnf module disable -y container-tools:rhel8
 sudo dnf module enable -y container-tools:3.0
 sudo dnf update -y
 sudo dnf install -y nfs-utils
-sudo scp stack@192.168.50.11:~/ca.pem /etc/pki/ca-trust/source/anchors/
+sudo vi /etc/pki/ca-trust/source/anchors/ca.pem
 sudo update-ca-trust extract
 sudo reboot
 
