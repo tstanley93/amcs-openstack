@@ -272,6 +272,7 @@ openstack overcloud deploy -v \
 --libvirt-type qemu \
 --disable-validations \
 --overcloud-ssh-user stack \
+--config-download-only \
 --overcloud-ssh-key /home/stack/.ssh/id_rsa \
 2>&1 | tee ${depName}_install.log
 
