@@ -9,6 +9,8 @@ resource_registry:
   OS::TripleO::ComputeVirt::Net::SoftwareConfig: /home/stack/templates/virtcompute4.yaml
   # Network configuration assignments for the ComputeMetal Role
   OS::TripleO::ComputeMetal::Net::SoftwareConfig: /home/stack/templates/metalcompute4.yaml
+  # Network configuration assignments for the ComputeMetal Role
+  OS::TripleO::SnicMetal::Net::SoftwareConfig: /home/stack/templates/metalsnic4.yaml
   # Network configuration assignments for the BlockStorage
   # OS::TripleO::BlockStorage::Net::SoftwareConfig: /usr/share/openstack-tripleo-heat-templates/network/config/multiple-nics-vlans/cinder-storage.yaml
   # Network configuration assignments for the ObjectStorage
@@ -31,6 +33,7 @@ parameter_defaults:
     thomas03-computevirt-0: computevirt1601
     # thomas03-computemetal-0: computemetal1601
     thomas03-computemetal-1: computemetal1602
+    thomas03-snicmetal-1: snicmetal1601
   DeployedServerPortMap:
     controller1601-ctlplane:
       fixed_ips:
@@ -75,6 +78,14 @@ parameter_defaults:
     computemetal1602-ctlplane: # m-d-r640-4.splab.pdsea.f5net.com
       fixed_ips:
         - ip_address: 192.168.60.92
+      subnets:
+        - cidr: 192.168.60.0/24
+      network:
+        tags:
+          - 192.168.60.0/24
+    snicmetal1601-ctlplane: # m-hp-dl380-5.splab.pdsea.f5net.com
+      fixed_ips:
+        - ip_address: 192.168.60.93
       subnets:
         - cidr: 192.168.60.0/24
       network:
@@ -149,13 +160,18 @@ parameter_defaults:
   ComputeVirtExtraConfig:        
     nova::disk_allocation_ratio: 4.0
   ComputeVirtSchedulerHints:
-    'capabilities:profile': 'compute-%index%'
+    'capabilities:profile': 'computevirt-%index%'
   ComputeMetalExtraConfig:        
     nova::disk_allocation_ratio: 4.0
   ComputeMetalSchedulerHints:
-    'capabilities:profile': 'compute-%index%'
+    'capabilities:profile': 'computemetal-%index%'
+  SnicMetalExtraConfig:        
+    nova::disk_allocation_ratio: 4.0
+  SnicMetalSchedulerHints:
+    'capabilities:profile': 'sniccompute-%index%'
   TimeZone: 'America/Los_Angeles'
   ControllerCount: 3
   ComputeVirtCount: 1
   ComputeMetalCount: 1
+  SnicMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']

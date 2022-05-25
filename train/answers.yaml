@@ -9,8 +9,6 @@ environments:
   - /home/stack/templates/docker-ha.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/host-config-and-reboot.yaml
   # - /usr/share/openstack-tripleo-heat-templates/environments/neutron-sriov.yaml
-  # - /home/stack/templates/overcloud_images_update.yaml
-  # - /home/stack/templates/disable-telemetry.yaml
   - /home/stack/templates/enable-tls.yaml
   - /home/stack/templates/inject-trust-anchor.yaml
   - /usr/share/openstack-tripleo-heat-templates/environments/ssl/tls-endpoints-public-ip.yaml
