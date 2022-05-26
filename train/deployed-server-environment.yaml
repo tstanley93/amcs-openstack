@@ -167,11 +167,45 @@ parameter_defaults:
     'capabilities:profile': 'computemetal-%index%'
   SnicMetalExtraConfig:        
     nova::disk_allocation_ratio: 4.0
+    tripleo::firewall::firewall_rules:
+      '305 F5 SNIC GUI Access':
+        port: 8443
+        proto: tcp
+        action: accept
   SnicMetalSchedulerHints:
     'capabilities:profile': 'sniccompute-%index%'
+  NovaSchedulerDefaultFilters: AvailabilityZoneFilter,RamFilter,DiskFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,AggregateInstanceExtraSpecsFilter,PciPassthroughFilter,NUMATopologyFilter
+  NovaPCIPassthrough:
+    - vendor_id: "f5f5"
+      product_id: "0101"
   TimeZone: 'America/Los_Angeles'
   ControllerCount: 3
   ComputeVirtCount: 1
   ComputeMetalCount: 1
   SnicMetalCount: 1
   NetworkDeploymentActions: ['CREATE','UPDATE']
+  # SnicMetalExtraConfigPre Parameters
+  registry_name: "192.168.60.11"
+  registry_port: "8787"
+  container_name: "f5snicorchestrator"
+  repo_path: "/f5/smartnic-rhel8-orch"
+  repo_tag: "2.0.10"
+  ControllerExtraConfig:
+    nova::pci::aliases:
+      - name: "f51"
+        product_id: "0101"
+        vendor_id: "f5f5"
+        device_type: "type-VF"
+        numa_policy: "preferred"
+  HPComputesriov-sfrParameters:
+    KernelArgs: "intel_iommu=on iommu=pt default_hugepagesz=2M hugepagesz=2M hugepages=512 isolcpus=1-13,29-41,15-27,43-55"
+    TunedProfileName: "cpu-partitioning"
+    IsolCpusList: "1-13,29-41,15-27,43-55"    
+    NovaVcpuPinSet: '1-13,29-41,15-27,43-55'
+    NovaReservedHostMemory: 8192
+    nova::pci::aliases:
+      - name: "f51"
+        product_id: "0101"
+        vendor_id: "f5f5"
+        device_type: "type-VF"
+        numa_policy: "preferred"
