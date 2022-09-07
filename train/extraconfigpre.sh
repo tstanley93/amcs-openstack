@@ -1,16 +1,8 @@
-#!/bin/sh
-## Add registry as insecure registry to podman just incase it is, for example the undercloud registry
-# cat << EOF | tee /etc/podman/daemon.json
-# {
-#     "insecure-registries" : [ "_registry_name_:_registry_port_" ]
-# }
-# EOF
+#!/bin/bash
 ## Verify that podman is loaded and we have access to it..
-sudo podman version > /dev/null 2>&1
-if [ $? != 0 ]; then
+if ! sudo podman version > /dev/null 2>&1; then
     sudo systemctl start podman;
-    sudo podman version > /dev/null 2>&1;
-    if [ $? != 0 ]; then
+    if ! sudo podman version > /dev/null 2>&1; then
         exit 1;
     fi
 fi
@@ -27,24 +19,7 @@ if [ "$(podman ps -qa -f name=$container_name)" ]; then
 else
     echo "Orchestrator container not found. Running orchestrator container now."
 fi
-##  Pull the F5 Orchestrator and start it from the Undercloud registry
-# sudo podman run -d -i -t \
-# -e TZ=America/Los_Angeles \
-# -e ACCEPT_EULA=Y \
-# -e DEBUG=Y \
-# --net=host \
-# -v /lib/modules:/lib/modules \
-# -v /usr/src:/usr/src \
-# -v /dev:/dev \
-# -v /var/log:/var/log \
-# -v /var/lib:/var/lib \
-# -v /usr/share/hwdata:/usr/share/hwdata \
-# --cap-add=ALL \
-# -p 8443:8443 \
-# --privileged=true \
-# --name $container_name \
-# _registry_name_:_registry_port__repo_path_:_repo_tag_
-
+## Run the container
 sudo podman run -d -i -t \
 -e TZ=America/Los_Angeles \
 -e ACCEPT_EULA=Y \
@@ -61,7 +36,6 @@ sudo podman run -d -i -t \
 --name $container_name \
 --tls-verify false \
 _registry_name_:_registry_port__repo_path_:_repo_tag_
-
 ## Check that the container actually loaded
 if [ "$(podman ps -qa -f name=$container_name)" ]; then
     if [ "$(podman ps -qa -f status=exited -f name=$container_name)" ]; then
@@ -78,7 +52,6 @@ fi
 COUNT=3600
 while [ $COUNT -gt 0 ]; do
     logs=$(podman logs $container_name --tail 7)
-    log_arr=($logs)
     if printf '%s\0' "$logs" | grep --quiet "Log Level: error"; then
         if printf '%s\0' "$logs" | grep --quiet "Error Message: The loaded image is not latest"; then
             #This error is fine. It should be just a warning instead of both an error and warning.
@@ -99,22 +72,22 @@ while [ $COUNT -gt 0 ]; do
         fi
     fi
     sleep 1
-    let COUNT=COUNT-1
+   ((COUNT=COUNT-1))
 done
-if (($COUNT == 0)); then
+if ((COUNT == 0)); then
     echo "Container timed out. Check the container logs for more info."
     exit 5
 fi
 ## Load the vfio-pci driver so that the OS can pass through the F5 SmartNIC VF's
 lspci=$(lspci -nnd :101)
-lspci_arr=($lspci)
+lspci_arr=("$lspci")
 primary_vf="0000:"${lspci_arr[15]}
 secondary_vf="0000:"${lspci_arr[0]}
-sudo driverctl set-override ${primary_vf} vfio-pci
-sudo driverctl set-override ${secondary_vf} vfio-pci
+sudo driverctl set-override "${primary_vf}" vfio-pci
+sudo driverctl set-override "${secondary_vf}" vfio-pci
 ## Verify the vfio-pci driver loaded successfully for each F5 SmartNIC VF
-primary_vf_driver=$(lspci -ks $primary_vf)
-secondary_vf_driver=$(lspci -ks $secondary_vf)
+primary_vf_driver=$(lspci -ks "$primary_vf")
+secondary_vf_driver=$(lspci -ks "$secondary_vf")
 if printf '%s\0' "$primary_vf_driver" | grep --quiet "Kernel driver in use: vfio-pci"; then
     echo "Vfio-pci driver loaded on first VF."
 else
@@ -126,24 +99,28 @@ else
     echo "[ERROR] Vfio-pci driver not loaded on second VF"
 fi
 ## Configure F5 Orchestrator to automatically restart on reboot of the compute node
-touch /etc/systemd/system/f5smartnic.service
-cat >> /etc/systemd/system/f5smartnic.service << EOF
-[Unit]
-Description=F5 SmartNIC Orchestrator Tool Container
-Requires=podman.service
-After=podman.service
+if [ -f /etc/systemd/system/f5smartnic.service ]; then
+    echo "The service is already defined"
+else
+    touch /etc/systemd/system/f5smartnic.service
+    cat << EOF | sudo tee /etc/systemd/system/f5smartnic.service
+    [Unit]
+    Description=F5 SmartNIC Orchestrator Tool Container
+    Requires=docker.service
+    After=docker.service
 
-[Service]
-Restart=always
-ExecStart=/usr/bin/podman start -a --name $container_name
-ExecStop=/usr/bin/podman stop -t 2 --name $container_name
+    [Service]
+    Restart=always
+    ExecStart=/usr/bin/docker start -a --name $container_name
+    ExecStop=/usr/bin/docker stop -t 2 --name $container_name
 
-[Install]
-WantedBy=local.target
+    [Install]
+    WantedBy=local.target
 EOF
-sudo systemctl daemon-reload
-sudo systemctl start f5smartnic.service
-sudo systemctl enable f5smartnic.service
+    sudo systemctl daemon-reload
+    # sudo systemctl start f5smartnic.service
+    sudo systemctl enable f5smartnic.service
+fi
 ## Remove registry as insecure registry for security
 cat << EOF | tee /etc/podman/daemon.json
 {}

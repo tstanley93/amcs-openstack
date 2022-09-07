@@ -32,8 +32,8 @@ parameter_defaults:
     thomas03-controller-2: controller1603
     thomas03-computevirt-0: computevirt1601
     # thomas03-computemetal-0: computemetal1601
-    thomas03-computemetal-1: computemetal1602
-    thomas03-snicmetal-1: snicmetal1601
+    # thomas03-computemetal-1: computemetal1602
+    # thomas03-snicmetal-1: snicmetal1601
   DeployedServerPortMap:
     controller1601-ctlplane:
       fixed_ips:
